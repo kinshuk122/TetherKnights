@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74af57b7b73b8a343b4a7b06ea8dbc5c, type: 3}
+  m_Name: SniperEnemy_G
+  m_EditorClassIdentifier: 
+  health: 120
+  damage: 10
+  enemyPrefab: {fileID: 0}
+  speed: 2
+  increaseSpeedOnGettingAttacked: 0
+  isGroundEnemy: 1
+  isBossEnemy: 0
+  timeBetweenAttacks: 0.5
+  throwSpeed: 150
+  enemyBullet: {fileID: 4074496659085174914, guid: 3bb0ef203717a484ea8bcba2960d97b4,
+    type: 3}
+  sightRange: 60
+  attackRange: 50
+  increaseSightOnGettingAttacked: 15

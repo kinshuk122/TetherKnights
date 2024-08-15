@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44de6f69cad4fe449b34473bbd79331c, type: 3}
+  m_Name: Blunderbuss
+  m_EditorClassIdentifier: 
+  damage: 40
+  fireRate: 0
+  spread: 0.3
+  range: 100
+  reloadTime: 1
+  timeBetweenShots: 1.5
+  magazineSize: 30
+  bulletsPerTap: 10
+  allowButtonHold: 0
+  gunPrefab: {fileID: 0}
+  bulletObject: 1
+  material: {fileID: 2100000, guid: d565eb01e0d91d74bad1138c2d235fe3, type: 2}
+  animationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  duration: 0
+  emissionColor: {r: 0, g: 1, b: 0.15309572, a: 1}
