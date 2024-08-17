@@ -18,7 +18,6 @@ public class Guns : NetworkBehaviour
     private float x;
     private float y;
     // public GameObject bulletTrailPrefab;
-    public GameObject bulletPrefab;
     public Slider gunReloadBar;
     public float colorIntensity;
     public float throwSpeed;
@@ -35,6 +34,9 @@ public class Guns : NetworkBehaviour
 
     [Header("Graphics")]
     public GameObject bulletHoleGraphic;
+    
+    [Header("For Instantiating")]
+    public GameObject bulletPrefab;
     
    private void Awake()
     {
@@ -126,7 +128,7 @@ public class Guns : NetworkBehaviour
         if (trailInstance != null)
         {
             NetworkObject networkObject = trailInstance.GetComponent<NetworkObject>();
-    
+
             if (IsServer)
             {
                 networkObject.Spawn();

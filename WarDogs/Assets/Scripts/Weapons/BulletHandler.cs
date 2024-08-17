@@ -12,7 +12,6 @@ public class BulletHandler : MonoBehaviour
     
     private void Update()
     {
-
         if (isBulletHole)
         {
             deactivateTimer -= Time.deltaTime * 0.3f;

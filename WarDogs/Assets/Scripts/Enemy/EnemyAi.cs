@@ -22,6 +22,9 @@ public class EnemyAi : NetworkBehaviour
     public NetworkVariable<int> networkEnemyType = new NetworkVariable<int>();
     public EnemyAIScriptableObject[] enemyAiScriptable;
     
+    [Header("For Instantiating")]
+    public GameObject enemyBullet;
+    
     [Header("Testing")] //Remove after model impliementation
     public Material groundEnemyMaterial;
     public Material flyingEnemyMaterial;
@@ -235,7 +238,15 @@ public class EnemyAi : NetworkBehaviour
         {
             // Attack Code
 
-            enemyBulletGo = PoolManager.instance.GetPooledEnemyBulletObject();
+            // enemyBulletGo = PoolManager.instance.GetPooledEnemyBulletObject();
+            // if (enemyBulletGo != null)
+            // {
+            //     enemyBulletGo.transform.position = this.transform.position;
+            //     enemyBulletGo.transform.rotation = this.transform.rotation;
+            //     enemyBulletGo.SetActive(true);
+            // }
+            
+            enemyBulletGo = Instantiate(enemyBullet);
             if (enemyBulletGo != null)
             {
                 enemyBulletGo.transform.position = this.transform.position;
@@ -286,7 +297,7 @@ public class EnemyAi : NetworkBehaviour
         TakeDamageServerRpc(damage);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void TakeDamageServerRpc(float damage)
     {
         // Increase stats on getting attacked
