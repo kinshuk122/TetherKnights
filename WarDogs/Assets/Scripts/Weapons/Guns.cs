@@ -89,11 +89,17 @@ public class Guns : NetworkBehaviour
 
         if (Physics.Raycast(attackPoint.position, direction, out rayHit, gunStats.range, whatIsEnemy))
         {
-            Debug.Log(rayHit.collider.name + " was hit!");
-            
             if (rayHit.collider.CompareTag("Enemy"))
             {
-                rayHit.collider.GetComponent<EnemyAi>().TakeDamage(gunStats.damage);
+                if (IsClient)
+                {
+                    rayHit.collider.GetComponent<EnemyAi>().TakeDamageClientRpc(gunStats.damage);
+
+                }
+                else
+                {
+                    rayHit.collider.GetComponent<EnemyAi>().TakeDamage(gunStats.damage);
+                }
             }
         }
 

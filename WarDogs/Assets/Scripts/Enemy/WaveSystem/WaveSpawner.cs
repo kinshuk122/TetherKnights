@@ -19,7 +19,8 @@ public class WaveSpawner : NetworkBehaviour
     private bool waveIncremented = false;
     private bool randomiseSpawn;
     private int breakLength; // in seconds
-
+    private NetworkVariable<int> selectedEnemyTypeId = new NetworkVariable<int>();
+    
     [Header("NotControlledValues - Change to Private in future")]
     public int maxEnemies;
     public int enemiesAlive = 0;
@@ -65,6 +66,11 @@ public class WaveSpawner : NetworkBehaviour
     void Update() {
         
         // enemiesLeft.text = "Enemies Left: " + spawnedEnemies.Count.ToString(); //Display number of enemies left
+
+        if (!IsOwner)
+        {
+            return;
+        }
         
         if (enemiesAlive <= minEnemies)
         {
@@ -77,12 +83,14 @@ public class WaveSpawner : NetworkBehaviour
 
             if (wave % 10 == 0 && activeSpawnPoints.Count >= 12) //if active spawn points are more than 50% boss wave 
             {
+                Debug.Log("wave divisible by 10");
                 randomiseSpawn = false;
                 SpawnEnemies(enemiesToSpawn / reduceSpawnByDivision , bossEnemy);
                 return;
             }
             else if (wave % 5 == 0) //Particular Enemy Wave
             {
+                Debug.Log("wave divisible by 5");
                 randomiseSpawn = false;
                 StartCoroutine(BreakSpawnEnemies(breakLength, enemyAiScriptable[Random.Range(0, totalEnemyTypes)]));
                 SpawnEnemies(enemiesToSpawn, enemyAiScriptable[Random.Range(0, totalEnemyTypes)]);
@@ -90,6 +98,7 @@ public class WaveSpawner : NetworkBehaviour
             }
             else //Default Wave
             {
+                Debug.Log("Default Wave");
                 randomiseSpawn = true;
                 SpawnEnemies(enemiesToSpawn, enemyAiScriptable[0]);
                 return;
@@ -106,24 +115,30 @@ public class WaveSpawner : NetworkBehaviour
         maxEnemies = maxEnemies + additionalMaxEnemies;
         enemiesToSpawn = ((minEnemies + (wave * additionalEnemiesPerWave) + (activeSpawnPoints.Count * additionalEnemiesPerBreaches)) - enemiesAlive);
 
-        if (enemiesToSpawn >= maxEnemies) 
+        if (enemiesToSpawn >= maxEnemies)
         {
             enemiesToSpawn = maxEnemies;
         }
-    
+
         for (int i = 0; i < numberOfEnemies; i++)
         {
-            if (activeSpawnPoints.Count > 0) 
+            if (activeSpawnPoints.Count > 0)
             {
-                if (randomiseSpawn)
-                {
-                    enemyType = enemyAiScriptable[Random.Range(0, totalEnemyTypes)];
-                }
-
                 spawnPoint = activeSpawnPoints[Random.Range(0, activeSpawnPoints.Count)];
 
                 if (IsServer)
                 {
+                    if (randomiseSpawn)
+                    {
+                        selectedEnemyTypeId.Value = Random.Range(0, totalEnemyTypes);
+                    }
+                    else
+                    {
+                        selectedEnemyTypeId.Value = Array.IndexOf(enemyAiScriptable, enemyType);
+                    }
+
+                    enemyType = enemyAiScriptable[selectedEnemyTypeId.Value]; // All clients use the same enemy type
+
                     GameObject enemyInstance = Instantiate(enemyPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
                     NetworkObject networkObject = enemyInstance.GetComponent<NetworkObject>();
@@ -132,8 +147,7 @@ public class WaveSpawner : NetworkBehaviour
                         networkObject.Spawn();
                     }
 
-                    enemyInstance.GetComponent<EnemyAi>().enemyType = enemyType;
-
+                    enemyInstance.GetComponent<EnemyAi>().networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
                     enemiesAlive++;
                 }
             }
@@ -146,10 +160,18 @@ public class WaveSpawner : NetworkBehaviour
 
         while (Time.time < startTime + duration)
         {
+            if (IsServer)
+            {
+                selectedEnemyTypeId.Value = Random.Range(0, totalEnemyTypes);
+            }
+
+            enemyType = enemyAiScriptable[selectedEnemyTypeId.Value];
+
             if (enemiesAlive < minEnemies)
             {
                 SpawnEnemies(minEnemies - enemiesAlive, enemyType);
             }
+
             yield return new WaitForSeconds(duration);
         }
     }

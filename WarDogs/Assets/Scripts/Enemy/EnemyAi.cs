@@ -19,6 +19,8 @@ public class EnemyAi : NetworkBehaviour
     private PlayerStats playerStats;
     public GameObject enemyBulletGo;
     public bool isActive;
+    public NetworkVariable<int> networkEnemyType = new NetworkVariable<int>();
+    public EnemyAIScriptableObject[] enemyAiScriptable;
     
     [Header("Testing")] //Remove after model impliementation
     public Material groundEnemyMaterial;
@@ -42,7 +44,7 @@ public class EnemyAi : NetworkBehaviour
     public float bossHealthThreshold = 0.5f;
     
     [Header("ScriptableObject References")] 
-    private NetworkVariable<float> networkHealth = new NetworkVariable<float>();
+    private NetworkVariable<float> networkHealth = new NetworkVariable<float>(1);
     private float damage;
     private float sightRange;
     private float attackRange;
@@ -111,6 +113,11 @@ public class EnemyAi : NetworkBehaviour
     private void Update()
     {
         Debug.Log(this.gameObject.name + "  " + networkHealth.Value);
+        
+        if (networkEnemyType.Value != Array.IndexOf(enemyAiScriptable, enemyType))
+        {
+            enemyType = enemyAiScriptable[networkEnemyType.Value];
+        }
         
         // Dodge
         dodgeTimer += Time.deltaTime;
@@ -303,6 +310,12 @@ public class EnemyAi : NetworkBehaviour
         {
             DestroyEnemyClientRpc();
         }
+    }
+    
+    [ClientRpc]
+    public void TakeDamageClientRpc(int damage)
+    {
+        TakeDamageServerRpc(damage);
     }
 
     [ClientRpc]
