@@ -22,8 +22,7 @@ public class PlayerStats : MonoBehaviour
     private void Awake()
     {
         fpsControllerScript = GetComponentInParent<FirstPersonController>();
-        // gameManager = GameObject.Find("Manager").GetComponent<GameManager>();
-        // gameManager.currentPlayer++; //Increase player amount
+        GameManager.instance.currentAlivePlayers++;
     }
 
     private void Update()
@@ -46,8 +45,6 @@ public class PlayerStats : MonoBehaviour
             fpsControllerScript.enabled = false;
             gunsScript.enabled = false;
             Respawn();
-            //Kill Player
-            
         }
     }
 
@@ -55,10 +52,7 @@ public class PlayerStats : MonoBehaviour
     {
         if (other.CompareTag("EnemyBullet") && health >= -1f)
         {
-            GameManager.instance.currentAlivePlayers++;
             allowToHeal = false;
-            // damage = other.GetComponent<BulletHandler>().damage;
-            // health -= damage;
             StartCoroutine(HealthBool());
         }
     }
