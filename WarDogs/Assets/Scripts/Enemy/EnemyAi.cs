@@ -186,6 +186,39 @@ public class EnemyAi : NetworkBehaviour
         EnemyTypeCondition();
     }
 
+    public void AssignTarget(string targetType)
+    {
+        if (targetType == "PermanentPart")
+        {
+            foreach (Transform target in targets)
+            {
+                if (target.CompareTag("PermanentPart"))
+                {
+                    Debug.Log("Permanent Part Targeted");
+                    player = target; 
+                    break;
+                }
+            }
+        }
+        else if (targetType == "Player")
+        {
+            foreach (Transform target in targets)
+            {
+                if (target.CompareTag("Player") && !target.GetComponentInChildren<PlayerStats>().isDead)
+                {
+                    player = target;
+                    playerStats = player.GetComponentInChildren<PlayerStats>();
+                    break;
+                }
+            }
+        }
+        
+        if (player == null)
+        {
+            player = targets[Random.Range(0, targets.Count)];
+        }
+    }
+    
     private void ChasePlayer()
     {
         if (playerStats != null && playerStats.isDead)

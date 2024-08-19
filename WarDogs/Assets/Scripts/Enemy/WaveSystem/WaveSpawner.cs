@@ -19,6 +19,7 @@ public class WaveSpawner : NetworkBehaviour
     private bool waveIncremented = false;
     private bool randomiseSpawn;
     private int breakLength; // in seconds
+    public float percentageOfEnemiesToTargetPermanentPart = 0.2f;
     private NetworkVariable<int> selectedEnemyTypeId = new NetworkVariable<int>();
     
     [Header("NotControlledValues - Change to Private in future")]
@@ -83,14 +84,12 @@ public class WaveSpawner : NetworkBehaviour
 
             if (wave % 10 == 0 && activeSpawnPoints.Count >= 12) //if active spawn points are more than 50% boss wave 
             {
-                Debug.Log("wave divisible by 10");
                 randomiseSpawn = false;
                 SpawnEnemies(enemiesToSpawn / reduceSpawnByDivision , bossEnemy);
                 return;
             }
             else if (wave % 5 == 0) //Particular Enemy Wave
             {
-                Debug.Log("wave divisible by 5");
                 randomiseSpawn = false;
                 StartCoroutine(BreakSpawnEnemies(breakLength, enemyAiScriptable[Random.Range(0, totalEnemyTypes)]));
                 SpawnEnemies(enemiesToSpawn, enemyAiScriptable[Random.Range(0, totalEnemyTypes)]);
@@ -98,7 +97,6 @@ public class WaveSpawner : NetworkBehaviour
             }
             else //Default Wave
             {
-                Debug.Log("Default Wave");
                 randomiseSpawn = true;
                 SpawnEnemies(enemiesToSpawn, enemyAiScriptable[0]);
                 return;
@@ -120,6 +118,9 @@ public class WaveSpawner : NetworkBehaviour
             enemiesToSpawn = maxEnemies;
         }
 
+        int permanentPartTargetCount = Mathf.CeilToInt(numberOfEnemies * percentageOfEnemiesToTargetPermanentPart);
+        int playerTargetCount = numberOfEnemies - permanentPartTargetCount;
+        
         for (int i = 0; i < numberOfEnemies; i++)
         {
             if (activeSpawnPoints.Count > 0)
@@ -145,6 +146,19 @@ public class WaveSpawner : NetworkBehaviour
                     if (networkObject != null)
                     {
                         networkObject.Spawn();
+                    }
+                    
+                    EnemyAi enemyAiScript = enemyInstance.GetComponent<EnemyAi>();
+                    
+                    if (permanentPartTargetCount > 0)
+                    {
+                        enemyAiScript.AssignTarget("PermanentPart");
+                        permanentPartTargetCount--;
+                    }
+                    else
+                    {
+                        enemyAiScript.AssignTarget("Player");
+                        playerTargetCount--;
                     }
 
                     enemyInstance.GetComponent<EnemyAi>().networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);

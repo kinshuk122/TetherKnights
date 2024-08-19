@@ -15,7 +15,6 @@ public class CalculateBreaches : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log("Update CalculateBreaches.cs");
         if (WaveSpawner.instance != null)
         {
             //TODO: Change the random range of time and damage on wllHealth script instead
