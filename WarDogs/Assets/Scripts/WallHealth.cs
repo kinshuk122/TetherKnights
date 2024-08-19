@@ -36,6 +36,11 @@ public class WallHealth : NetworkBehaviour
 
     void Update()
     {
+        if (!GameManager.instance.hasWaveStarted)
+        {
+            return;
+        }
+        
         if (IsServer)
         {
             if (health.Value > maxHealth)

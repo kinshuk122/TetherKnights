@@ -270,10 +270,10 @@ public class EnemyAi : NetworkBehaviour
 
                 if (hit.collider.CompareTag("PermanentPart"))
                 {
-                    hit.collider.GetComponent<PermanentPartsHandler>().health -= damage;
+                    hit.collider.GetComponent<PermanentPartsHandler>().health.Value -= damage;
                     audioSource.PlayOneShot(permanentPartHitAudio, 1f);
 
-                    if (hit.collider.GetComponent<PermanentPartsHandler>().isDestroyed)
+                    if (hit.collider.GetComponent<PermanentPartsHandler>().isDestroyed.Value)
                     {
                         hit.collider.gameObject.SetActive(false);
                         ChasePlayer();

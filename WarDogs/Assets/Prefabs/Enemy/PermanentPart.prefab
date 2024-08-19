@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3336698692852270392}
   - component: {fileID: 4360706280510689628}
   - component: {fileID: 3884380280172293206}
+  - component: {fileID: 720288202018035661}
   - component: {fileID: 5736291754330368955}
   m_Layer: 0
   m_Name: PermanentPart
@@ -225,6 +226,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &720288202018035661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4401819855480479172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3234513188
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &5736291754330368955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,11 +259,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a7715aeb6c705f49a2e17b1a9d0869e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 1200
-  isDestroyed: 0
-  repairAmount: 5
-  isRepairing: 0
-  playerInput: {fileID: 0}
+  health:
+    m_InternalValue: 0
+  isDestroyed:
+    m_InternalValue: 0
+  maxHealth: 0
+  repairAmount:
+    m_InternalValue: 0
+  isRepairing:
+    m_InternalValue: 0
   repairAudio: {fileID: 8300000, guid: 6a16debf4b158c940b44bf4ac3a9608a, type: 3}
   destroyAudio: {fileID: 8300000, guid: 7751bf1ca3ef015418231495afabd538, type: 3}
-  audioSource: {fileID: 0}

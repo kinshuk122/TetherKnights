@@ -1,36 +1,55 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PermanentPartsHandler : MonoBehaviour
+public class PermanentPartsHandler : NetworkBehaviour
 {
-    public float health;
-    public bool isDestroyed = false;
+    [Header("PermanentPart settings")]
+    public NetworkVariable<float> health = new NetworkVariable<float>(writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> isDestroyed = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Server);
+    public float maxHealth;
     
     [Header("Repairing")]
-    public float repairAmount;
-    public bool isRepairing;
-    public PlayerInput playerInput;
-    
+    public NetworkVariable<float> repairAmount = new NetworkVariable<float>();
+    public NetworkVariable<bool> isRepairing = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Server);
+    private PlayerInput playerInput;
+    private Coroutine repairCoroutine;
+
     [Header("Audio Reference")]
     public AudioClip repairAudio;
     public AudioClip destroyAudio;
-    public AudioSource audioSource;
+    private AudioSource audioSource;
 
     private void Awake()
     {
+        repairAmount.Value = 5;
+        health.Value = 1100;
+        maxHealth = health.Value;
         audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
-        if(health <= 0)
+        if (IsServer)
         {
-            isDestroyed = true;
-            AudioSource.PlayClipAtPoint(destroyAudio, transform.position);
-            this.gameObject.SetActive(false);
+            if (health.Value <= 0 && !isDestroyed.Value)
+            {
+                isDestroyed.Value = true;
+                AudioSource.PlayClipAtPoint(destroyAudio, transform.position);
+                this.gameObject.SetActive(false);
+            }
+
+            if (health.Value > 0 && isDestroyed.Value)
+            {
+                isDestroyed.Value = false;
+                this.gameObject.SetActive(true);
+            }
+
+            if (isRepairing.Value)
+            {
+                RepairPartServerRpc();
+            }
         }
     }
 
@@ -38,17 +57,23 @@ public class PermanentPartsHandler : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player is here");
             playerInput = other.GetComponentInParent<PlayerInput>();
 
             if (playerInput != null)
             {
                 if (playerInput.actions["Repair"].IsPressed())
                 {
-                    isRepairing = true;
-                    health += repairAmount * Time.deltaTime;
-                    
-                    if (!audioSource.isPlaying)
+                    if (IsClient)
+                    {
+                        RequestStartRepairingServerRpc();
+                    }
+
+                    if (IsServer && repairCoroutine == null)
+                    {
+                        repairCoroutine = StartCoroutine(RepairOverTime());
+                    }
+
+                    if (IsServer && !audioSource.isPlaying)
                     {
                         audioSource.clip = repairAudio;
                         audioSource.Play();
@@ -56,21 +81,66 @@ public class PermanentPartsHandler : MonoBehaviour
                 }
                 else
                 {
-                    if (audioSource != null)
+                    if (IsServer && repairCoroutine != null)
                     {
+                        StopCoroutine(repairCoroutine);
+                        repairCoroutine = null;
+                        isRepairing.Value = false;
                         audioSource.Stop();
                     }
                 }
             }
         }
     }
-    
+
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             playerInput = null;
-            isRepairing = false;
+
+            if (IsServer && repairCoroutine != null)
+            {
+                StopCoroutine(repairCoroutine);
+                repairCoroutine = null;
+                isRepairing.Value = false;
+                audioSource.Stop();
+            }
+        }
+    }
+
+    private IEnumerator RepairOverTime()
+    {
+        isRepairing.Value = true;
+
+        while (isRepairing.Value)
+        {
+            RepairPartServerRpc();
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RepairPartServerRpc()
+    {
+        health.Value += repairAmount.Value * 0.1f;
+
+        if (health.Value > maxHealth)
+        {
+            health.Value = maxHealth;
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestStartRepairingServerRpc(ServerRpcParams rpcParams = default)
+    {
+        if (health.Value < maxHealth)
+        {
+            isRepairing.Value = true;
+            if (repairCoroutine == null)
+            {
+                repairCoroutine = StartCoroutine(RepairOverTime());
+            }
         }
     }
 }

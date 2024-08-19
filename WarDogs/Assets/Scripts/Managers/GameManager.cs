@@ -5,12 +5,16 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance;
-
     
+    public static GameManager instance;
+    
+    [Header("Players Settings")]
     public int currentPlayer;
     public int currentAlivePlayers;
 
+    [Header("Wave Settings")] 
+    public bool hasWaveStarted = false; //This is getting changed in pauseMenu
+    
     private void Awake()
     {
         instance = this;

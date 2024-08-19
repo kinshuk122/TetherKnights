@@ -74,7 +74,7 @@ public class PauseMenu : NetworkBehaviour
     public void StartWaves()
     {
         StartWavesServerRpc();
-        //Add Breakable wall spawns as well, stop them from starting 
+        GameManager.instance.hasWaveStarted = true;
     }
     
     [ServerRpc]
