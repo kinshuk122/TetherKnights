@@ -39,7 +39,6 @@ public class PoolManager : NetworkBehaviour
 
     private IEnumerator Start()
     {
-        Debug.Log("Start from here");
         while (!NetworkManager.Singleton.IsListening)
         {
             yield return null;
@@ -47,7 +46,6 @@ public class PoolManager : NetworkBehaviour
         
         if (IsServer)
         {
-            Debug.Log("12345");
             BulletTrailPooling();
             BulletObjectPooling();
             EnemyBulletObjectPooling();

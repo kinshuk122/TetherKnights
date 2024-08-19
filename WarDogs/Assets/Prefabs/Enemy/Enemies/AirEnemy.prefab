@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6193323903229226}
   - component: {fileID: 5111007672045928253}
   - component: {fileID: 1401839599183363187}
+  - component: {fileID: 4832010960508069978}
   - component: {fileID: 1435545599346148508}
   m_Layer: 8
   m_Name: AirEnemy
@@ -129,6 +130,27 @@ NavMeshAgent:
   m_BaseOffset: 4
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &4832010960508069978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9189114959047826070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 4118845584
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &1435545599346148508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,18 +163,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c4e9993146b98e4b8496001d984723b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent: {fileID: 1401839599183363187}
   enemyType: {fileID: 11400000, guid: 5e5e7ad6347f35646af7df934145e64e, type: 2}
+  agent: {fileID: 1401839599183363187}
+  baseOffset: 0
   player: {fileID: 0}
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 64
-  whatIsPlayer:
-    serializedVersion: 2
-    m_Bits: 128
+  targets: []
   enemyBulletGo: {fileID: 0}
-  walkPoint: {x: 0, y: 0, z: 0}
-  walkPointSet: 0
-  tempWalkPoint: {x: 0, y: 0, z: 0}
+  isActive: 0
+  networkEnemyType:
+    m_InternalValue: 0
+  enemyAiScriptable: []
+  enemyBullet: {fileID: 0}
+  groundEnemyMaterial: {fileID: 0}
+  flyingEnemyMaterial: {fileID: 0}
+  firePoint: {fileID: 0}
+  dodgeSpeed: 0
+  dodgeCooldown: 0
   playerInSightRange: 0
   playerInAttackRange: 0
+  increaseBossSpeed: 0
+  bossHealthThreshold: 0.5
+  permanentPartHitAudio: {fileID: 0}
+  hitAudio: {fileID: 0}

@@ -52,12 +52,11 @@ namespace StarterAssets
 		public float TopClamp = 90.0f;
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
+
+		// cinemachine
 		private float _cinemachineTargetPitch;
-		public CinemachineVirtualCamera vc;
-		
-		[Header("Audio")]
-		public AudioListener audioListener;
-		
+		public CinemachineVirtualCamera cinemachineVirtualCamera;
+
 		// player
 		private float _speed;
 		private float _rotationVelocity;
@@ -97,8 +96,6 @@ namespace StarterAssets
 			{
 				_mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
 			}
-			audioListener = _mainCamera.GetComponent<AudioListener>();
-
 		}
 
 		private void Start()
@@ -114,27 +111,17 @@ namespace StarterAssets
 			// reset our timeouts on start
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
-
-			if (IsOwner)
-			{
-				vc.Follow = transform;
-				vc.LookAt = transform;
-			}
 		}
-		
+
 		public override void OnNetworkSpawn()
 		{
 			if (IsOwner)
 			{
-				audioListener.enabled = true;
-				vc.Follow = transform;
-				vc.LookAt = transform;				
-				vc.Priority = 15;
-				
+				cinemachineVirtualCamera.Priority = 15;
 			}
 			else
 			{
-				vc.Priority = 10;
+				cinemachineVirtualCamera.Priority = 10;
 			}
 		}
 
@@ -148,12 +135,11 @@ namespace StarterAssets
 				_playerInput.SwitchCurrentControlScheme("KeyboardMouse", keyboard, mouse);
 			}
 
+			
 			if (!IsOwner)
 			{
 				return;
 			}
-
-			_playerInput.enabled = true;
 			
 			JumpAndGravity();
 			GroundedCheck();

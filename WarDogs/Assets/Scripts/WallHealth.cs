@@ -1,68 +1,77 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using StarterAssets;
-using UnityEditor.Rendering;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Random = UnityEngine.Random;
 
-public class WallHealth : MonoBehaviour
+public class WallHealth : NetworkBehaviour
 {
-    public float health;
-    private float maxHealth;
+    public NetworkVariable<float> health = new NetworkVariable<float>(writePerm: NetworkVariableWritePermission.Server);
+    public float maxHealth;
     private Material wallMat;
-    public float timeCounter;
+    public NetworkVariable<float> timeCounter = new NetworkVariable<float>(writePerm: NetworkVariableWritePermission.Server);
     private float time;
     private float damage;
     public GameObject spawnPoint;
 
     [Header("Repairing")]
-    public float repairAmount;
-    private bool isRepairing;
+    public NetworkVariable<float> repairAmount = new NetworkVariable<float>();
+    public NetworkVariable<bool> isRepairing = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Server);
     private PlayerInput playerInput;
-    
+    public NetworkVariable<bool> broken = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Server);
+    private Coroutine repairCoroutine;
+
     [Header("Audio Reference")]
     public AudioClip repairAudio;
     private AudioSource audioSource;
-    
-    //TODO: Prone to error active the reduction of wallHealth only if wave system is active
+
     private void Awake()
     {
-        maxHealth = health;
+        health.Value = 10;
+        repairAmount.Value = 5;
+        maxHealth = health.Value;
         wallMat = GetComponent<Renderer>().material;
         audioSource = GetComponent<AudioSource>();
         time = Random.Range(0, 15);
     }
-    
+
     void Update()
     {
-        if(health > maxHealth)
+        if (IsServer)
         {
-            health = maxHealth;
-        }
-        
-        if (!isRepairing)
-        {
-            timeCounter += Time.deltaTime;
-
-            if (timeCounter >= time)
+            if (health.Value > maxHealth)
             {
-                damage = Random.Range(0, 15);
-                health -= damage;
-                time = Random.Range(0, 15);
-                timeCounter = 0f;
+                health.Value = maxHealth;
+            }
+
+            if (!isRepairing.Value && !broken.Value)
+            {
+                timeCounter.Value += Time.deltaTime;
+
+                if (timeCounter.Value >= time)
+                {
+                    damage = Random.Range(0, 15);
+                    health.Value -= damage;
+                    time = Random.Range(0, 15);
+                    timeCounter.Value = 0f;
+                }
+            }
+
+            if (isRepairing.Value)
+            {
+                RepairWallServerRpc();
             }
         }
-        
-        if (health <= 0f)
+
+        if (health.Value <= 0f)
         {
             wallMat.color = Color.red;
+            broken.Value = true;
             spawnPoint.SetActive(true);
         }
         else
         {
             wallMat.color = Color.blue;
+            broken.Value = false;
             spawnPoint.SetActive(false);
         }
     }
@@ -77,10 +86,17 @@ public class WallHealth : MonoBehaviour
             {
                 if (playerInput.actions["Repair"].IsPressed())
                 {
-                    isRepairing = true;
-                    health += repairAmount * Time.deltaTime; 
-                    
-                    if (!audioSource.isPlaying)
+                    if (IsClient)
+                    {
+                        RequestStartRepairingServerRpc();
+                    }
+
+                    if (IsServer && repairCoroutine == null)
+                    {
+                        repairCoroutine = StartCoroutine(RepairOverTime());
+                    }
+
+                    if (IsServer && !audioSource.isPlaying)
                     {
                         audioSource.clip = repairAudio;
                         audioSource.Play();
@@ -88,18 +104,61 @@ public class WallHealth : MonoBehaviour
                 }
                 else
                 {
-                    audioSource.Stop();
+                    if (IsServer && repairCoroutine != null)
+                    {
+                        StopCoroutine(repairCoroutine);
+                        repairCoroutine = null;
+                        isRepairing.Value = false;
+                        audioSource.Stop();
+                    }
                 }
             }
         }
     }
-    
+
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             playerInput = null;
-            isRepairing = false;
+
+            if (IsServer && repairCoroutine != null)
+            {
+                StopCoroutine(repairCoroutine);
+                repairCoroutine = null;
+                isRepairing.Value = false;
+                audioSource.Stop();
+            }
+        }
+    }
+
+    private IEnumerator RepairOverTime()
+    {
+        isRepairing.Value = true;
+
+        while (isRepairing.Value)
+        {
+            RepairWallServerRpc();
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RepairWallServerRpc()
+    {
+        health.Value += repairAmount.Value * 0.1f;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestStartRepairingServerRpc(ServerRpcParams rpcParams = default)
+    {
+        if (health.Value < maxHealth)
+        {
+            isRepairing.Value = true;
+            if (repairCoroutine == null)
+            {
+                repairCoroutine = StartCoroutine(RepairOverTime());
+            }
         }
     }
 }

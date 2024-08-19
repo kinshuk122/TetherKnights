@@ -15,17 +15,19 @@ public class CalculateBreaches : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log("Update CalculateBreaches.cs");
         if (WaveSpawner.instance != null)
         {
+            //TODO: Change the random range of time and damage on wllHealth script instead
             float percentage = (float)WaveSpawner.instance.activeSpawnPoints.Count / totalBreaches;
             if (percentage > breachThresholdPercentage && !hasAdjustedHealth)
             {
-                wallHealthScript.health += increasedBreachHealth;
+                // wallHealthScript.health.Value += increasedBreachHealth;
                 hasAdjustedHealth = true;
             }
             else if (percentage <= breachThresholdPercentage && hasAdjustedHealth)
             {
-                wallHealthScript.health -= increasedBreachHealth;
+                // wallHealthScript.health.Value -= increasedBreachHealth;
                 hasAdjustedHealth = false;
             }
         }
