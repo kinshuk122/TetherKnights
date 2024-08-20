@@ -47,7 +47,7 @@ public class EnemyAi : NetworkBehaviour
     public float bossHealthThreshold = 0.5f;
     
     [Header("ScriptableObject References")] 
-    private NetworkVariable<float> networkHealth = new NetworkVariable<float>(1);
+    public NetworkVariable<float> networkHealth = new NetworkVariable<float>(120);
     private float damage;
     private float sightRange;
     private float attackRange;
@@ -115,8 +115,6 @@ public class EnemyAi : NetworkBehaviour
 
     private void Update()
     {
-        Debug.Log(this.gameObject.name + "  " + networkHealth.Value);
-        
         if (networkEnemyType.Value != Array.IndexOf(enemyAiScriptable, enemyType))
         {
             enemyType = enemyAiScriptable[networkEnemyType.Value];
@@ -303,7 +301,7 @@ public class EnemyAi : NetworkBehaviour
 
                 if (hit.collider.CompareTag("PermanentPart"))
                 {
-                    hit.collider.GetComponent<PermanentPartsHandler>().health.Value -= damage;
+                    hit.collider.GetComponent<PermanentPartsHandler>().RequestTakeDamageServerRpc(damage);
                     audioSource.PlayOneShot(permanentPartHitAudio, 1f);
 
                     if (hit.collider.GetComponent<PermanentPartsHandler>().isDestroyed.Value)
@@ -324,21 +322,14 @@ public class EnemyAi : NetworkBehaviour
         alreadyAttacked = false;
     }
     
-    public void TakeDamage(int damage)
-    {
-        // Call server RPC to update health
-        TakeDamageServerRpc(damage);
-    }
 
     [ServerRpc(RequireOwnership = false)]
     public void TakeDamageServerRpc(float damage)
     {
-        // Increase stats on getting attacked
-        // networkHealth.Value += enemyType.increaseSightOnGettingAttacked;
-        // speed += increaseSpeedOnGettingAttacked;
-
+        // Reduce the enemy's health on the server
         networkHealth.Value -= damage;
 
+        // Additional logic when the enemy is hit
         if (networkHealth.Value > 0 && dodgeTimer >= dodgeCooldown)
         {
             // Dodge the next attack
@@ -359,7 +350,10 @@ public class EnemyAi : NetworkBehaviour
     [ClientRpc]
     public void TakeDamageClientRpc(int damage)
     {
-        TakeDamageServerRpc(damage);
+        if (IsOwner)
+        {
+            TakeDamageServerRpc(damage);
+        }
     }
 
     [ClientRpc]

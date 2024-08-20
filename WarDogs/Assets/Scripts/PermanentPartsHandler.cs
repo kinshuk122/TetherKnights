@@ -143,4 +143,20 @@ public class PermanentPartsHandler : NetworkBehaviour
             }
         }
     }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestTakeDamageServerRpc(float damage)
+    {
+        TakeDamage(damage);
+    }
+    
+    public void TakeDamage(float damage)
+    {
+        health.Value -= damage;
+        if (health.Value <= 0)
+        {
+            isDestroyed.Value = true;
+            this.gameObject.SetActive(false);
+        }
+    }
 }

@@ -15,7 +15,6 @@ public class WaveSpawner : NetworkBehaviour
     [Header("WaveSystem")] 
     public GameObject enemyPrefab;
     private GameObject spawnPoint;
-    public GameObject enemyGo;
     private bool waveIncremented = false;
     private bool randomiseSpawn;
     private int breakLength; // in seconds

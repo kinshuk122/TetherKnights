@@ -95,12 +95,8 @@ public class Guns : NetworkBehaviour
             {
                 if (IsClient)
                 {
-                    rayHit.collider.GetComponent<EnemyAi>().TakeDamageClientRpc(gunStats.damage);
-
-                }
-                else
-                {
-                    rayHit.collider.GetComponent<EnemyAi>().TakeDamage(gunStats.damage);
+                    // Request the server to handle the damage
+                    rayHit.collider.GetComponent<EnemyAi>().TakeDamageServerRpc(gunStats.damage);
                 }
             }
         }
