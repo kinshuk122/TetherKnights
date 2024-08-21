@@ -1,4 +1,7 @@
-﻿using Cinemachine;
+﻿//ToDo: There's an error with Gravity. Jumping behavior seems floaty and wrong. Check out Player vars and JumpandGravity() for further comments
+//ToDo: Press-Shift Listener is missing from Move()
+
+using Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
@@ -61,6 +64,7 @@ namespace StarterAssets
 		private float _speed;
 		private float _rotationVelocity;
 		private float _verticalVelocity;
+		//Felix here: I'm not sure, but TerminalVelocity could be part of why the player is so floaty.
 		private float _terminalVelocity = 53.0f;
 
 		// timeout deltatime
@@ -269,6 +273,7 @@ namespace StarterAssets
 			}
 
 			// apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
+			// Felix: My hunch is the weird falling behavior is caused here, with the random private float _terminalVelocity = 53.0
 			if (_verticalVelocity < _terminalVelocity)
 			{
 				_verticalVelocity += Gravity * Time.deltaTime;
