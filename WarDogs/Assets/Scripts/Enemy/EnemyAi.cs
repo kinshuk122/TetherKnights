@@ -39,7 +39,7 @@ public class EnemyAi : NetworkBehaviour
     private bool alreadyAttacked;
     
     [Header("About States")]
-    public bool playerInSightRange;
+    // public bool playerInSightRange;
     public bool playerInAttackRange;
 
     [Header("Enemy Type Conditions")] 
@@ -48,11 +48,12 @@ public class EnemyAi : NetworkBehaviour
     
     [Header("ScriptableObject References")] 
     public NetworkVariable<float> networkHealth = new NetworkVariable<float>(120);
-    private float damage;
-    private float sightRange;
-    private float attackRange;
-    private float speed;
-    private float increaseSpeedOnGettingAttacked;
+    public float damage;
+    public float sightRange;
+    public float attackRange;
+    public float speed;
+    public float increaseSpeedOnGettingAttacked;
+    private bool areAllPropertiesEqual = false;
     
     [Header("Audio Refernece")]
     public AudioClip permanentPartHitAudio;
@@ -98,19 +99,6 @@ public class EnemyAi : NetworkBehaviour
             // Initialize Network Variables on the server
             networkHealth.Value = enemyType.health;
         }
-
-        damage = enemyType.damage;
-        sightRange = enemyType.sightRange;
-        attackRange = enemyType.attackRange;
-        speed = enemyType.speed;
-        increaseSpeedOnGettingAttacked = enemyType.increaseSightOnGettingAttacked;
-        agent.speed = speed;
-
-        if (!enemyType.isGroundEnemy)
-        {
-            agent.agentTypeID = -1372625422; //Flying Enemy ID found from Inspector Debug
-            agent.baseOffset = baseOffset;
-        }
     }
 
     private void Update()
@@ -118,7 +106,16 @@ public class EnemyAi : NetworkBehaviour
         if (networkEnemyType.Value != Array.IndexOf(enemyAiScriptable, enemyType))
         {
             enemyType = enemyAiScriptable[networkEnemyType.Value];
+            
         }
+        
+        if (!areAllPropertiesEqual)
+        {
+            ArePropertiesEqual();
+        }
+        
+        // playerInSightRange = false;
+        playerInAttackRange = false;
         
         // Dodge
         dodgeTimer += Time.deltaTime;
@@ -131,20 +128,20 @@ public class EnemyAi : NetworkBehaviour
             }
         }
 
-        Collider[] collidersInSightRange = Physics.OverlapSphere(transform.position, sightRange);
+        // Collider[] collidersInSightRange = Physics.OverlapSphere(transform.position, sightRange);
         Collider[] collidersInAttackRange = Physics.OverlapSphere(transform.position, attackRange);
 
-        if (!playerInSightRange)
-        {
-            foreach (var collider in collidersInSightRange)
-            {
-                if (collider.transform == player)
-                {
-                    playerInSightRange = true;
-                    break;
-                }
-            }
-        }
+        // if (!playerInSightRange)
+        // {
+        //     foreach (var collider in collidersInSightRange)
+        //     {
+        //         if (collider.transform == player)
+        //         {
+        //             playerInSightRange = true;
+        //             break;
+        //         }
+        //     }
+        // }
 
         if (!playerInAttackRange)
         {
@@ -158,7 +155,7 @@ public class EnemyAi : NetworkBehaviour
             }
         }
 
-        if (!playerInSightRange && !playerInAttackRange)
+        if (/*!playerInSightRange && */!playerInAttackRange)
         {
             ChasePlayer();
         }
@@ -176,7 +173,7 @@ public class EnemyAi : NetworkBehaviour
             ChasePlayer();
         }
 
-        if (playerInAttackRange && playerInSightRange)
+        if (playerInAttackRange /*&& playerInSightRange*/)
         {
             AttackPlayer();
         }
@@ -184,6 +181,7 @@ public class EnemyAi : NetworkBehaviour
         EnemyTypeCondition();
     }
 
+    /*
     public void AssignTarget(string targetType)
     {
         if (targetType == "PermanentPart")
@@ -216,12 +214,13 @@ public class EnemyAi : NetworkBehaviour
             player = targets[Random.Range(0, targets.Count)];
         }
     }
+    */
     
     private void ChasePlayer()
     {
         if (playerStats != null && playerStats.isDead)
         {
-            playerInSightRange = false;
+            // playerInSightRange = false;
             playerInAttackRange = false;
 
             for (int i = targets.Count - 1; i >= 0; i--)
@@ -238,7 +237,7 @@ public class EnemyAi : NetworkBehaviour
 
         if (!player.gameObject.activeInHierarchy)
         {
-            playerInSightRange = false;
+            // playerInSightRange = false;
             playerInAttackRange = false;
 
             isActive = false;
@@ -280,15 +279,15 @@ public class EnemyAi : NetworkBehaviour
             enemyBulletGo = Instantiate(enemyBullet);
             if (enemyBulletGo != null)
             {
-                enemyBulletGo.transform.position = this.transform.position;
-                enemyBulletGo.transform.rotation = this.transform.rotation;
+                enemyBulletGo.transform.position = firePoint.transform.position;
+                enemyBulletGo.transform.rotation = firePoint.transform.rotation;
                 enemyBulletGo.SetActive(true);
             }
 
             Rigidbody rb = enemyBulletGo.GetComponent<Rigidbody>();
             enemyBulletGo.transform.position = firePoint.transform.position;
             Vector3 throwDirection = (player.position - firePoint.transform.position).normalized;
-            rb.AddForce(throwDirection * enemyType.throwSpeed, ForceMode.Impulse);
+            rb.AddForce(throwDirection * 500f, ForceMode.Impulse);
 
             RaycastHit hit;
             if (Physics.Raycast(firePoint.transform.position, throwDirection, out hit, sightRange))
@@ -408,12 +407,66 @@ public class EnemyAi : NetworkBehaviour
         }
     }
 
+    private (bool, string) ArePropertiesEqual()
+    {
+        if (damage != enemyType.damage)
+        {
+            damage = enemyType.damage;
+            return (false, "damage");
+        }
+        if (sightRange != enemyType.sightRange)
+        {
+            sightRange = enemyType.sightRange;
+            return (false, "sightRange");
+        }
+        if (attackRange != enemyType.attackRange)
+        {
+            attackRange = enemyType.attackRange;
+            return (false, "attackRange");
+        }
+        if (speed != enemyType.speed)
+        {
+            speed = enemyType.speed;
+            agent.speed = speed;
+            return (false, "speed");
+        }
+        if (increaseSpeedOnGettingAttacked != enemyType.increaseSightOnGettingAttacked)
+        {
+            increaseSpeedOnGettingAttacked = enemyType.increaseSightOnGettingAttacked;
+            return (false, "increaseSpeedOnGettingAttacked");
+        }
+        if (agent.speed != speed)
+        {
+            agent.speed = speed;
+            return (false, "agent.speed");
+        }
+        if(networkHealth.Value != enemyType.health)
+        {
+            networkHealth.Value = enemyType.health;
+            return (false, "networkHealth.Value");
+        }
+        if (!enemyType.isGroundEnemy)
+        {
+            if (agent.agentTypeID != -1372625422)
+            {
+                agent.agentTypeID = -1372625422;
+                return (false, "agent.agentTypeID");
+            }
+            if (agent.baseOffset != baseOffset)
+            {
+                agent.baseOffset = baseOffset;
+                return (false, "agent.baseOffset");
+            }
+        }
+        areAllPropertiesEqual = true;
+
+        return (true, "");
+    }
+    
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-
-        Gizmos.color = Color.black;
-        Gizmos.DrawWireSphere(transform.position, sightRange);
+        
     }
 }

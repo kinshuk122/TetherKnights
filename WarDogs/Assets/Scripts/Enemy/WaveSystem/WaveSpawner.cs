@@ -59,10 +59,6 @@ public class WaveSpawner : NetworkBehaviour
         totalEnemyTypes = enemyAiScriptable.Length;
     }
 
-    private void Start()
-    {
-    }
-
     void Update() {
         
         // enemiesLeft.text = "Enemies Left: " + spawnedEnemies.Count.ToString(); //Display number of enemies left
@@ -119,7 +115,7 @@ public class WaveSpawner : NetworkBehaviour
     
     private void SpawnEnemies(int numberOfEnemies, EnemyAIScriptableObject enemyType)
     {
-        maxEnemies = maxEnemies + additionalMaxEnemies;
+        // maxEnemies = maxEnemies + additionalMaxEnemies;
         enemiesToSpawn = ((minEnemies + (wave * additionalEnemiesPerWave) + (activeSpawnPoints.Count * additionalEnemiesPerBreaches)) - enemiesAlive);
 
         if (enemiesToSpawn >= maxEnemies)
@@ -158,17 +154,18 @@ public class WaveSpawner : NetworkBehaviour
                     }
                     
                     EnemyAi enemyAiScript = enemyInstance.GetComponent<EnemyAi>();
+                    enemyAiScript.networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
                     
-                    if (permanentPartTargetCount > 0)
-                    {
-                        enemyAiScript.AssignTarget("PermanentPart");
-                        permanentPartTargetCount--;
-                    }
-                    else
-                    {
-                        enemyAiScript.AssignTarget("Player");
-                        playerTargetCount--;
-                    }
+                    // if (permanentPartTargetCount > 0)
+                    // {
+                    //     enemyAiScript.AssignTarget("PermanentPart");
+                    //     permanentPartTargetCount--;
+                    // }
+                    // else
+                    // {
+                    //     enemyAiScript.AssignTarget("Player");
+                    //     playerTargetCount--;
+                    // }
 
                     enemyInstance.GetComponent<EnemyAi>().networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
                     enemiesAlive++;

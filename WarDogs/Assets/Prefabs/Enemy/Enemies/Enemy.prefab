@@ -371,7 +371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: {fileID: 11400000, guid: 5e5e7ad6347f35646af7df934145e64e, type: 2}
   agent: {fileID: 1401839599183363187}
-  baseOffset: 4
+  baseOffset: 2
   player: {fileID: 5365462296395314267}
   targets: []
   enemyBulletGo: {fileID: 4074496659085174914, guid: 3bb0ef203717a484ea8bcba2960d97b4,
@@ -394,6 +394,8 @@ MonoBehaviour:
   playerInAttackRange: 0
   increaseBossSpeed: 20
   bossHealthThreshold: 0.5
+  networkHealth:
+    m_InternalValue: 120
   permanentPartHitAudio: {fileID: 8300000, guid: cdb32251ad7a59c448f009ea514632e5,
     type: 3}
   hitAudio: {fileID: 8300000, guid: 86d16a93195de7c428343dfa204709ac, type: 3}

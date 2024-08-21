@@ -23,5 +23,5 @@ MonoBehaviour:
   enemyBullet: {fileID: 4074496659085174914, guid: 3bb0ef203717a484ea8bcba2960d97b4,
     type: 3}
   sightRange: 60
-  attackRange: 50
+  attackRange: 60
   increaseSightOnGettingAttacked: 15
