@@ -17,6 +17,7 @@ public class TestRelay : MonoBehaviour
     [SerializeField] private TMP_InputField joinLobbyCode;
     public int maxPlayer;
     public TextMeshProUGUI joinCodeText;
+    
     private async void Start()
     {
        await UnityServices.InitializeAsync();
@@ -26,7 +27,7 @@ public class TestRelay : MonoBehaviour
             Debug.Log("Signed in: " + AuthenticationService.Instance.PlayerId);
        };
        await AuthenticationService.Instance.SignInAnonymouslyAsync();
-       //This method is being called in testLobby as well so check where it needs to be called
+       Debug.Log("Signed in: " + AuthenticationService.Instance.PlayerId);
 
     }
 

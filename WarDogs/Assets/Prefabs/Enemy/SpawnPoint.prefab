@@ -168,7 +168,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b3e2f81fa9c34664ea7992cedfb22102, type: 2}
+  - {fileID: 2100000, guid: 683e9c883a6a0b0448c8dabb04037096, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -225,10 +225,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health:
     m_InternalValue: 0
-  maxHealth: 0
+  maxHealth: 30
   timeCounter:
     m_InternalValue: 0
   spawnPoint: {fileID: 1700556444191455860}
+  red: {fileID: 2100000, guid: 713683495dbb9154baf30fda97e25200, type: 2}
+  blue: {fileID: 2100000, guid: 683e9c883a6a0b0448c8dabb04037096, type: 2}
   repairAmount:
     m_InternalValue: 0
   isRepairing:

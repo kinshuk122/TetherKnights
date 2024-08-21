@@ -50,6 +50,7 @@ public class WaveSpawner : NetworkBehaviour
     [Header("Audio Reference")]
     public AudioClip waveStartAudio;
     private AudioSource audioSource;
+    private bool hasAudioPlayed = false;
 
     private void Awake()
     {
@@ -60,16 +61,25 @@ public class WaveSpawner : NetworkBehaviour
 
     private void Start()
     {
-        audioSource.PlayOneShot(waveStartAudio);
     }
 
     void Update() {
         
         // enemiesLeft.text = "Enemies Left: " + spawnedEnemies.Count.ToString(); //Display number of enemies left
 
-        if (!IsOwner)
+        if (!IsOwner || !GameManager.instance.hasWaveStarted.Value)
         {
             return;
+        }
+
+        if (GameManager.instance.hasWaveStarted.Value && !hasAudioPlayed)
+        {
+            audioSource.PlayOneShot(waveStartAudio);
+            hasAudioPlayed = true;
+        }
+        else if (!GameManager.instance.hasWaveStarted.Value)
+        {
+            hasAudioPlayed = false;
         }
         
         if (enemiesAlive <= minEnemies)

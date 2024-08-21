@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     
     public static GameManager instance;
@@ -13,7 +14,7 @@ public class GameManager : MonoBehaviour
     public int currentAlivePlayers;
 
     [Header("Wave Settings")] 
-    public bool hasWaveStarted = false;
+    public NetworkVariable<bool> hasWaveStarted = new NetworkVariable<bool>();
 
     [Header("Text Reference")] 
     public TextMeshProUGUI gameOverText;
@@ -26,9 +27,9 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if(currentAlivePlayers == 0 && hasWaveStarted)
+        if(currentAlivePlayers == 0 && hasWaveStarted.Value)
         {
-            hasWaveStarted = false;
+            hasWaveStarted.Value = false;
             gameOverText.enabled = true;
         }
     }

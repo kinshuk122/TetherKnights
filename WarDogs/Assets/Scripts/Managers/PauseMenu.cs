@@ -35,7 +35,6 @@ public class PauseMenu : NetworkBehaviour
         
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log("Escape pressed");
             isPaused = !isPaused;
             pauseMenu.SetActive(isPaused);
         }
@@ -52,29 +51,10 @@ public class PauseMenu : NetworkBehaviour
         }
     }
     
-    public void RestartLevel()
-    {
-        Time.timeScale = 1f;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-    }
-    
-    public void RestartGame()
-    {
-        Time.timeScale = 1f;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-    }
-
-    public void Quit()
-    {
-        Debug.Log("Quitting game...");
-        Application.Quit();
-    }
-    
-    
     public void StartWaves()
     {
         StartWavesServerRpc();
-        GameManager.instance.hasWaveStarted = true;
+        GameManager.instance.hasWaveStarted.Value = true;
     }
     
     [ServerRpc]
@@ -88,5 +68,10 @@ public class PauseMenu : NetworkBehaviour
     public void StartWavesClientRpc()
     {
         waveSpawner.enabled = true;
+    }
+    
+    public void ToggleHasWaveStarted()
+    {
+        GameManager.instance.hasWaveStarted.Value = !GameManager.instance.hasWaveStarted.Value;
     }
 }

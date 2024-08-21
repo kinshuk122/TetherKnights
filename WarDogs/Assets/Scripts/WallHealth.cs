@@ -5,19 +5,25 @@ using UnityEngine.InputSystem;
 
 public class WallHealth : NetworkBehaviour
 {
-    public NetworkVariable<float> health = new NetworkVariable<float>(writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<float> health = new NetworkVariable<float>(30f);
     public float maxHealth;
-    private Material wallMat;
-    public NetworkVariable<float> timeCounter = new NetworkVariable<float>(writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<float> timeCounter = new NetworkVariable<float>();
     private float time;
     private float damage;
     public GameObject spawnPoint;
 
+    [Header("Colors")]
+    public Material red;
+    public Material blue;
+    
+    public enum MaterialState { Red, Blue }
+    private MaterialState materialState;
+
     [Header("Repairing")]
-    public NetworkVariable<float> repairAmount = new NetworkVariable<float>();
-    public NetworkVariable<bool> isRepairing = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<float> repairAmount = new NetworkVariable<float>(5f);
+    public NetworkVariable<bool> isRepairing = new NetworkVariable<bool>();
     private PlayerInput playerInput;
-    public NetworkVariable<bool> broken = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> broken = new NetworkVariable<bool>();
     private Coroutine repairCoroutine;
 
     [Header("Audio Reference")]
@@ -26,17 +32,23 @@ public class WallHealth : NetworkBehaviour
 
     private void Awake()
     {
-        health.Value = 10;
-        repairAmount.Value = 5;
-        maxHealth = health.Value;
-        wallMat = GetComponent<Renderer>().material;
         audioSource = GetComponent<AudioSource>();
         time = Random.Range(0, 15);
     }
 
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            health.Value = 30f;
+            maxHealth = health.Value;
+            repairAmount.Value = 5f;
+        }
+    }
+
     void Update()
     {
-        if (!GameManager.instance.hasWaveStarted)
+        if (!GameManager.instance.hasWaveStarted.Value)
         {
             return;
         }
@@ -65,19 +77,47 @@ public class WallHealth : NetworkBehaviour
             {
                 RepairWallServerRpc();
             }
+
+            // Check and update material state
+            UpdateMaterialState();
         }
 
         if (health.Value <= 0f)
         {
-            wallMat.color = Color.red;
             broken.Value = true;
             spawnPoint.SetActive(true);
         }
         else
         {
-            wallMat.color = Color.blue;
             broken.Value = false;
             spawnPoint.SetActive(false);
+        }
+    }
+
+    private void UpdateMaterialState()
+    {
+        if (health.Value <= 0f && materialState != MaterialState.Red)
+        {
+            materialState = MaterialState.Red;
+            UpdateMaterialClientRpc(MaterialState.Red);
+        }
+        else if (health.Value > 0f && materialState != MaterialState.Blue)
+        {
+            materialState = MaterialState.Blue;
+            UpdateMaterialClientRpc(MaterialState.Blue);
+        }
+    }
+
+    [ClientRpc]
+    private void UpdateMaterialClientRpc(MaterialState newState)
+    {
+        if (newState == MaterialState.Red)
+        {
+            this.gameObject.GetComponent<MeshRenderer>().material = red;
+        }
+        else if (newState == MaterialState.Blue)
+        {
+            this.gameObject.GetComponent<MeshRenderer>().material = blue;
         }
     }
 
@@ -151,7 +191,9 @@ public class WallHealth : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void RepairWallServerRpc()
     {
-        health.Value += repairAmount.Value * 0.1f;
+        health.Value += repairAmount.Value * 1f;
+
+        UpdateMaterialState();
     }
 
     [ServerRpc(RequireOwnership = false)]
