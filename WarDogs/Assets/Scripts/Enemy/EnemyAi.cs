@@ -39,9 +39,9 @@ public class EnemyAi : NetworkBehaviour
     private bool alreadyAttacked;
     
     [Header("About States")]
-    // public bool playerInSightRange;
     public bool playerInAttackRange;
-
+    public bool playerInLineOfSight;
+    
     [Header("Enemy Type Conditions")] 
     public float increaseBossSpeed;
     public float bossHealthThreshold = 0.5f;
@@ -106,18 +106,16 @@ public class EnemyAi : NetworkBehaviour
         if (networkEnemyType.Value != Array.IndexOf(enemyAiScriptable, enemyType))
         {
             enemyType = enemyAiScriptable[networkEnemyType.Value];
-            
         }
-        
+
         if (!areAllPropertiesEqual)
         {
             ArePropertiesEqual();
         }
-        
-        // playerInSightRange = false;
+
         playerInAttackRange = false;
-        
-        // Dodge
+        playerInLineOfSight = false;
+
         dodgeTimer += Time.deltaTime;
         if (isDodging)
         {
@@ -128,34 +126,32 @@ public class EnemyAi : NetworkBehaviour
             }
         }
 
-        // Collider[] collidersInSightRange = Physics.OverlapSphere(transform.position, sightRange);
         Collider[] collidersInAttackRange = Physics.OverlapSphere(transform.position, attackRange);
 
-        // if (!playerInSightRange)
-        // {
-        //     foreach (var collider in collidersInSightRange)
-        //     {
-        //         if (collider.transform == player)
-        //         {
-        //             playerInSightRange = true;
-        //             break;
-        //         }
-        //     }
-        // }
-
-        if (!playerInAttackRange)
+        Vector3 raycastOrigin = firePoint != null ? firePoint.transform.position : transform.position + Vector3.up;
+        foreach (var collider in collidersInAttackRange)
         {
-            foreach (var collider in collidersInAttackRange)
+            if (collider.transform == player)
             {
-                if (collider.transform == player)
+                playerInAttackRange = true;
+
+                Vector3 directionToPlayer = (player.position - raycastOrigin).normalized;
+                RaycastHit hit;
+                int layerMask = LayerMask.GetMask("Default", "Player"); 
+
+                if (Physics.Raycast(raycastOrigin, directionToPlayer, out hit, attackRange, layerMask))
                 {
-                    playerInAttackRange = true;
-                    break;
+                    if (hit.transform.CompareTag("Player") || hit.transform.CompareTag("PermanentPart"))
+                    {
+                        playerInLineOfSight = true;
+                    }
                 }
+
+                break;
             }
         }
 
-        if (/*!playerInSightRange && */!playerInAttackRange)
+        if (!playerInAttackRange || !playerInLineOfSight)
         {
             ChasePlayer();
         }
@@ -173,7 +169,7 @@ public class EnemyAi : NetworkBehaviour
             ChasePlayer();
         }
 
-        if (playerInAttackRange /*&& playerInSightRange*/)
+        if (playerInAttackRange && playerInLineOfSight)
         {
             AttackPlayer();
         }
@@ -181,7 +177,6 @@ public class EnemyAi : NetworkBehaviour
         EnemyTypeCondition();
     }
 
-    /*
     public void AssignTarget(string targetType)
     {
         if (targetType == "PermanentPart")
@@ -214,13 +209,11 @@ public class EnemyAi : NetworkBehaviour
             player = targets[Random.Range(0, targets.Count)];
         }
     }
-    */
     
     private void ChasePlayer()
     {
         if (playerStats != null && playerStats.isDead)
         {
-            // playerInSightRange = false;
             playerInAttackRange = false;
 
             for (int i = targets.Count - 1; i >= 0; i--)
@@ -237,7 +230,6 @@ public class EnemyAi : NetworkBehaviour
 
         if (!player.gameObject.activeInHierarchy)
         {
-            // playerInSightRange = false;
             playerInAttackRange = false;
 
             isActive = false;

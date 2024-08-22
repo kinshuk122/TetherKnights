@@ -156,16 +156,16 @@ public class WaveSpawner : NetworkBehaviour
                     EnemyAi enemyAiScript = enemyInstance.GetComponent<EnemyAi>();
                     enemyAiScript.networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
                     
-                    // if (permanentPartTargetCount > 0)
-                    // {
-                    //     enemyAiScript.AssignTarget("PermanentPart");
-                    //     permanentPartTargetCount--;
-                    // }
-                    // else
-                    // {
-                    //     enemyAiScript.AssignTarget("Player");
-                    //     playerTargetCount--;
-                    // }
+                    if (permanentPartTargetCount > 0)
+                    {
+                        enemyAiScript.AssignTarget("PermanentPart");
+                        permanentPartTargetCount--;
+                    }
+                    else
+                    {
+                        enemyAiScript.AssignTarget("Player");
+                        playerTargetCount--;
+                    }
 
                     enemyInstance.GetComponent<EnemyAi>().networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
                     enemiesAlive++;
