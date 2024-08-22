@@ -1,4 +1,10 @@
-﻿//ToDo: There's an error with Gravity. Jumping behavior seems floaty and wrong. Check out Player vars and JumpandGravity() for further comments
+﻿//ToDo: There's an error with Gravity. When the player jumps, bool Grounded is not calculated correctly, due to GroundedOffset and GroundedRadius set to wrong values. 
+//ToDo: I haven't figured out the logic 100%, but there's two components that need fixing: 
+// 1. Set GroundedOffSet to -0.2 and GroundedRadius to  about 0.6. GroundedRadius should check wether we touch the ground, usually from half the capsule height (1 unit) to the ground
+// In engine, you'll see that BoolGrounded never switches to neg., so the player is constantly accerlating upwards. Leads to
+// 2. Set up PlayerCapsule correctly. In engine you can see that the capsule close hovers at 0.6, instead of 0.5, idk why. Is it floating? Is is bigger? I can't figure it out.
+// My assumption is that GroundedCheck() is working correctly, we're just not setting up the listener correctly. What are we detecting? Not the ground for sure.
+// Additional possibility: PlayerController comp from Unity is interfering, it seems to have its own radius. 
 //ToDo: Press-Shift Listener is missing from Move()
 
 using Cinemachine;
@@ -30,7 +36,7 @@ namespace StarterAssets
 		[Tooltip("The height the player can jump")]
 		public float JumpHeight = 1.2f;
 		[Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
-		public float Gravity = -15.0f;
+		public float Gravity = -9.81f;
 
 		[Space(10)]
 		[Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
@@ -42,7 +48,9 @@ namespace StarterAssets
 		[Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
 		public bool Grounded = true;
 		[Tooltip("Useful for rough ground")]
+		//Felix: GroundedOffset is an additional check to see if the player is standing on a ledge or smth. This should be in the range of -0.14 to -0.3, was (positive) 1.5 in engine.
 		public float GroundedOffset = -0.14f;
+		//Felix: GroundedRadius should be at the base of the capsule, so if the capsule is 1, it should be 0.5. It's not, tho, in engine :)))
 		[Tooltip("The radius of the grounded check. Should match the radius of the CharacterController")]
 		public float GroundedRadius = 0.5f;
 		[Tooltip("What layers the character uses as ground")]
@@ -64,7 +72,6 @@ namespace StarterAssets
 		private float _speed;
 		private float _rotationVelocity;
 		private float _verticalVelocity;
-		//Felix here: I'm not sure, but TerminalVelocity could be part of why the player is so floaty.
 		private float _terminalVelocity = 53.0f;
 
 		// timeout deltatime
@@ -158,6 +165,7 @@ namespace StarterAssets
 		private void GroundedCheck()
 		{
 			// set sphere position, with offset
+			//Felix: Not sure if the Grounded error occurs here. My hunch is that the check picks uf some different object, maybe the capsule itself.
 			Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
 			Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
 		}
@@ -166,7 +174,7 @@ namespace StarterAssets
 		{
 			// if there is an input
 			if (_input.look.sqrMagnitude >= _threshold)
-			{
+			{	
 				//Don't multiply mouse input by Time.deltaTime
 				float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 				
@@ -186,6 +194,7 @@ namespace StarterAssets
 
 		private void Move()
 		{
+			// Felix: Shift-listener is missing from the function for sprint.
 			// set target speed based on move speed, sprint speed and if sprint is pressed
 			float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -241,12 +250,13 @@ namespace StarterAssets
 				// stop our velocity dropping infinitely when grounded
 				if (_verticalVelocity < 0.0f)
 				{
-					_verticalVelocity = -2f;
+					_verticalVelocity = -4f;
 				}
 
 				// Jump
 				if (_input.jump && _jumpTimeoutDelta <= 0.0f)
 				{
+					// Felix: Could adapt -2f to more, depening on jump height, but this is just a minor issue.
 					// the square root of H * -2 * G = how much velocity needed to reach desired height
 					_verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 				}
@@ -268,12 +278,12 @@ namespace StarterAssets
 					_fallTimeoutDelta -= Time.deltaTime;
 				}
 
+				// Felix: In the setup, as it is right now, Grounded never unchecks
 				// if we are not grounded, do not jump
 				_input.jump = false;
 			}
 
 			// apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
-			// Felix: My hunch is the weird falling behavior is caused here, with the random private float _terminalVelocity = 53.0
 			if (_verticalVelocity < _terminalVelocity)
 			{
 				_verticalVelocity += Gravity * Time.deltaTime;
