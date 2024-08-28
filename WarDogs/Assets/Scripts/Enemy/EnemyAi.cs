@@ -92,14 +92,14 @@ public class EnemyAi : NetworkBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    private void Start()
-    {
-        if (IsServer)
-        {
-            // Initialize Network Variables on the server
-            networkHealth.Value = enemyType.health;
-        }
-    }
+    // private void Start()
+    // {
+    //     if (IsServer)
+    //     {
+    //         // Initialize Network Variables on the server
+    //         networkHealth.Value = enemyType.health;
+    //     }
+    // }
 
     private void Update()
     {
@@ -108,7 +108,7 @@ public class EnemyAi : NetworkBehaviour
             enemyType = enemyAiScriptable[networkEnemyType.Value];
         }
 
-        if (!areAllPropertiesEqual)
+        if (!areAllPropertiesEqual && IsServer)
         {
             ArePropertiesEqual();
         }
@@ -179,27 +179,27 @@ public class EnemyAi : NetworkBehaviour
 
     public void AssignTarget(string targetType)
     {
-        if (targetType == "PermanentPart")
+        bool targetFound = false;
+        while (!targetFound)
         {
-            foreach (Transform target in targets)
+            Transform selectedTarget = targets[UnityEngine.Random.Range(0, targets.Count)];
+
+            if (selectedTarget.CompareTag(targetType))
             {
-                if (target.CompareTag("PermanentPart"))
+                if (targetType == "Player")
                 {
-                    Debug.Log("Permanent Part Targeted");
-                    player = target; 
-                    break;
+                    PlayerStats targetPlayerStats = selectedTarget.GetComponentInChildren<PlayerStats>();
+                    if (targetPlayerStats != null && !targetPlayerStats.isDead)
+                    {
+                        player = selectedTarget;
+                        playerStats = targetPlayerStats;
+                        targetFound = true;
+                    }
                 }
-            }
-        }
-        else if (targetType == "Player")
-        {
-            foreach (Transform target in targets)
-            {
-                if (target.CompareTag("Player") && !target.GetComponentInChildren<PlayerStats>().isDead)
+                else if (targetType == "PermanentPart")
                 {
-                    player = target;
-                    playerStats = player.GetComponentInChildren<PlayerStats>();
-                    break;
+                    player = selectedTarget;
+                    targetFound = true;
                 }
             }
         }

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: BossEnemy_G
   m_EditorClassIdentifier: 
   health: 600
-  damage: 10
+  damage: 40
   speed: 10
   increaseSpeedOnGettingAttacked: 0
   isGroundEnemy: 0
   isBossEnemy: 1
-  timeBetweenAttacks: 0.5
+  timeBetweenAttacks: 3
   throwSpeed: 500
   enemyBullet: {fileID: 4074496659085174914, guid: 3bb0ef203717a484ea8bcba2960d97b4,
     type: 3}
