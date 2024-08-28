@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 3884380280172293206}
   - component: {fileID: 720288202018035661}
   - component: {fileID: 5736291754330368955}
+  - component: {fileID: 5607494513053140548}
   m_Layer: 0
   m_Name: PermanentPart
   m_TagString: PermanentPart
@@ -270,3 +271,19 @@ MonoBehaviour:
     m_InternalValue: 0
   repairAudio: {fileID: 8300000, guid: 6a16debf4b158c940b44bf4ac3a9608a, type: 3}
   destroyAudio: {fileID: 8300000, guid: 7751bf1ca3ef015418231495afabd538, type: 3}
+--- !u!208 &5607494513053140548
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4401819855480479172}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
