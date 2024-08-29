@@ -40,16 +40,19 @@ public class PermanentPartsHandler : NetworkBehaviour
                 this.gameObject.SetActive(false);
             }
 
-            if (health.Value > 0 && isDestroyed.Value)
-            {
-                isDestroyed.Value = false;
-                this.gameObject.SetActive(true);
-            }
-
             if (isRepairing.Value)
             {
                 RepairPartServerRpc();
             }
+        }
+        
+        if (isDestroyed.Value && this.gameObject.activeSelf)
+        {
+            this.gameObject.SetActive(false);
+        }
+        else if (!isDestroyed.Value && !this.gameObject.activeSelf)
+        {
+            this.gameObject.SetActive(true);
         }
     }
 
@@ -153,10 +156,5 @@ public class PermanentPartsHandler : NetworkBehaviour
     public void TakeDamage(float damage)
     {
         health.Value -= damage;
-        if (health.Value <= 0)
-        {
-            isDestroyed.Value = true;
-            this.gameObject.SetActive(false);
-        }
     }
 }

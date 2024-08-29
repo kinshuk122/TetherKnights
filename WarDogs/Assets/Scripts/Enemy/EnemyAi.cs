@@ -47,12 +47,12 @@ public class EnemyAi : NetworkBehaviour
     public float bossHealthThreshold = 0.5f;
     
     [Header("ScriptableObject References")] 
-    public NetworkVariable<float> networkHealth = new NetworkVariable<float>(120);
-    public float damage;
-    public float sightRange;
-    public float attackRange;
-    public float speed;
-    public float increaseSpeedOnGettingAttacked;
+    public NetworkVariable<float> networkHealth = new NetworkVariable<float>();
+    public NetworkVariable<float> damage = new NetworkVariable<float>();
+    public NetworkVariable<float> sightRange = new NetworkVariable<float>();
+    public NetworkVariable<float> attackRange = new NetworkVariable<float>();
+    public NetworkVariable<float> speed = new NetworkVariable<float>();
+    public NetworkVariable<float> increaseSpeedOnGettingAttacked = new NetworkVariable<float>();
     private bool areAllPropertiesEqual = false;
     
     [Header("Audio Refernece")]
@@ -126,7 +126,7 @@ public class EnemyAi : NetworkBehaviour
             }
         }
 
-        Collider[] collidersInAttackRange = Physics.OverlapSphere(transform.position, attackRange);
+        Collider[] collidersInAttackRange = Physics.OverlapSphere(transform.position, attackRange.Value);
 
         Vector3 raycastOrigin = firePoint != null ? firePoint.transform.position : transform.position + Vector3.up;
         foreach (var collider in collidersInAttackRange)
@@ -139,7 +139,7 @@ public class EnemyAi : NetworkBehaviour
                 RaycastHit hit;
                 int layerMask = LayerMask.GetMask("Default", "Player"); 
 
-                if (Physics.Raycast(raycastOrigin, directionToPlayer, out hit, attackRange, layerMask))
+                if (Physics.Raycast(raycastOrigin, directionToPlayer, out hit, attackRange.Value, layerMask))
                 {
                     if (hit.transform.CompareTag("Player") || hit.transform.CompareTag("PermanentPart"))
                     {
@@ -282,17 +282,17 @@ public class EnemyAi : NetworkBehaviour
             rb.AddForce(throwDirection * 500f, ForceMode.Impulse);
 
             RaycastHit hit;
-            if (Physics.Raycast(firePoint.transform.position, throwDirection, out hit, sightRange))
+            if (Physics.Raycast(firePoint.transform.position, throwDirection, out hit, sightRange.Value))
             {
                 if (hit.collider.CompareTag("Player"))
                 {
-                    hit.collider.GetComponent<PlayerStats>().health -= damage;
+                    hit.collider.GetComponent<PlayerStats>().health -= damage.Value;
                     audioSource.PlayOneShot(hitAudio, 0.75f);
                 }
 
                 if (hit.collider.CompareTag("PermanentPart"))
                 {
-                    hit.collider.GetComponent<PermanentPartsHandler>().RequestTakeDamageServerRpc(damage);
+                    hit.collider.GetComponent<PermanentPartsHandler>().RequestTakeDamageServerRpc(damage.Value);
                     audioSource.PlayOneShot(permanentPartHitAudio, 1f);
 
                     if (hit.collider.GetComponent<PermanentPartsHandler>().isDestroyed.Value)
@@ -401,35 +401,35 @@ public class EnemyAi : NetworkBehaviour
 
     private (bool, string) ArePropertiesEqual()
     {
-        if (damage != enemyType.damage)
+        if (damage.Value != enemyType.damage)
         {
-            damage = enemyType.damage;
+            damage.Value = enemyType.damage;
             return (false, "damage");
         }
-        if (sightRange != enemyType.sightRange)
+        if (sightRange.Value != enemyType.sightRange)
         {
-            sightRange = enemyType.sightRange;
+            sightRange.Value = enemyType.sightRange;
             return (false, "sightRange");
         }
-        if (attackRange != enemyType.attackRange)
+        if (attackRange.Value != enemyType.attackRange)
         {
-            attackRange = enemyType.attackRange;
+            attackRange.Value = enemyType.attackRange;
             return (false, "attackRange");
         }
-        if (speed != enemyType.speed)
+        if (speed.Value != enemyType.speed)
         {
-            speed = enemyType.speed;
-            agent.speed = speed;
+            speed.Value = enemyType.speed;
+            agent.speed = speed.Value;
             return (false, "speed");
         }
-        if (increaseSpeedOnGettingAttacked != enemyType.increaseSightOnGettingAttacked)
+        if (increaseSpeedOnGettingAttacked.Value != enemyType.increaseSightOnGettingAttacked)
         {
-            increaseSpeedOnGettingAttacked = enemyType.increaseSightOnGettingAttacked;
+            increaseSpeedOnGettingAttacked.Value = enemyType.increaseSightOnGettingAttacked;
             return (false, "increaseSpeedOnGettingAttacked");
         }
-        if (agent.speed != speed)
+        if (agent.speed != speed.Value)
         {
-            agent.speed = speed;
+            agent.speed = speed.Value;
             return (false, "agent.speed");
         }
         if(networkHealth.Value != enemyType.health)
@@ -458,7 +458,7 @@ public class EnemyAi : NetworkBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(transform.position, attackRange.Value);
         
     }
 }
