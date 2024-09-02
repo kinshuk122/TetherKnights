@@ -139,7 +139,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5.8713183, y: -21.477154, z: -3.5355797}
-  m_LocalScale: {x: 1, y: 1.45, z: 1}
+  m_LocalScale: {x: 0.6, y: 1, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5365462296395314267}
@@ -390,12 +390,22 @@ MonoBehaviour:
   firePoint: {fileID: 5600027865519836041}
   dodgeSpeed: 10
   dodgeCooldown: 4
-  playerInSightRange: 0
   playerInAttackRange: 0
+  playerInLineOfSight: 0
   increaseBossSpeed: 20
   bossHealthThreshold: 0.5
   networkHealth:
     m_InternalValue: 120
+  damage:
+    m_InternalValue: 0
+  sightRange:
+    m_InternalValue: 0
+  attackRange:
+    m_InternalValue: 0
+  speed:
+    m_InternalValue: 0
+  increaseSpeedOnGettingAttacked:
+    m_InternalValue: 0
   permanentPartHitAudio: {fileID: 8300000, guid: cdb32251ad7a59c448f009ea514632e5,
     type: 3}
   hitAudio: {fileID: 8300000, guid: 86d16a93195de7c428343dfa204709ac, type: 3}

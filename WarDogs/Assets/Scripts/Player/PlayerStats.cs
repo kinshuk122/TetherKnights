@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using StarterAssets;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerStats : MonoBehaviour
+public class PlayerStats : NetworkBehaviour
 {
     [Header("PlayerStats")] 
     public float maxHealth;
-    public float health = 120;
+    public NetworkVariable<float> health = new NetworkVariable<float>();
     public bool allowToHeal;
     public float damage;
     public float respawnTimer;
@@ -27,12 +28,12 @@ public class PlayerStats : MonoBehaviour
 
     private void Update()
     {
-        if (health <= maxHealth && allowToHeal)
+        if (health.Value <= maxHealth && allowToHeal)
         {
-            health += Time.deltaTime / 2;
+            health.Value += Time.deltaTime / 2;
         }
 
-        if (health <= 0)
+        if (health.Value <= 0)
         {
             if (!isDead)
             {
@@ -50,7 +51,7 @@ public class PlayerStats : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("EnemyBullet") && health >= -1f)
+        if (other.CompareTag("EnemyBullet") && health.Value >= -1f)
         {
             allowToHeal = false;
             StartCoroutine(HealthBool());
@@ -78,7 +79,7 @@ public class PlayerStats : MonoBehaviour
             fpsControllerScript.enabled = true;
             gunsScript.enabled = true;
             respawnTimer =+ respawnTimeIncrease;
-            health = maxHealth;
+            health.Value = maxHealth;
             allowToHeal = true;
         }
     }

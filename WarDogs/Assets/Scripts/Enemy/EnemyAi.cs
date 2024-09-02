@@ -212,6 +212,30 @@ public class EnemyAi : NetworkBehaviour
     
     private void ChasePlayer()
     {
+        if (!agent.enabled)
+        {
+            agent.enabled = true;
+        }
+        
+        if (!agent.isOnNavMesh)
+        {
+            // Move the agent to a position on the NavMesh
+            // This is just an example, you should replace this with your own logic
+            agent.Warp(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z));
+        }
+        
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(player.position, out hit, 1.0f, NavMesh.AllAreas))
+        {
+            agent.SetDestination(player.position);
+        }
+        else
+        {
+            // Find a position on the NavMesh that is as close as possible to the player's position and set that as the destination
+            // This is just an example, you should replace this with your own logic
+            agent.SetDestination(new Vector3(player.position.x, player.position.y + 1, player.position.z));
+        }
+        
         if (playerStats != null && playerStats.isDead)
         {
             playerInAttackRange = false;
@@ -286,7 +310,7 @@ public class EnemyAi : NetworkBehaviour
             {
                 if (hit.collider.CompareTag("Player"))
                 {
-                    hit.collider.GetComponent<PlayerStats>().health -= damage.Value;
+                    hit.collider.GetComponent<PlayerStats>().health.Value -= damage.Value;
                     audioSource.PlayOneShot(hitAudio, 0.75f);
                 }
 

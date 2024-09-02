@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 7.631181, y: 11.3, z: 6.2}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 874985122703891210}
@@ -71,7 +71,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8791016969285932882
 Transform:
   m_ObjectHideFlags: 0
@@ -81,7 +81,7 @@ Transform:
   m_GameObject: {fileID: 1700556444191455860}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.84, y: 1.135, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wallHealthScript: {fileID: 3336529443227015472}
-  totalBreaches: 22
+  totalBreaches: 7
   breachThresholdPercentage: 0.7
   increasedBreachHealth: 50
   hasAdjustedHealth: 0
@@ -209,8 +209,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 6.5499535, y: 1, z: 1}
-  m_Center: {x: -0.013878299, y: 0, z: 0}
+  m_Size: {x: 4.37, y: 1, z: 1}
+  m_Center: {x: 1.65, y: 0, z: 0}
 --- !u!114 &3336529443227015472
 MonoBehaviour:
   m_ObjectHideFlags: 0

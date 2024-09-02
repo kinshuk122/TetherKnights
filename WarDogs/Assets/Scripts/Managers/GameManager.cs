@@ -27,7 +27,7 @@ public class GameManager : NetworkBehaviour
 
     void Update()
     {
-        if(currentAlivePlayers == 0 && hasWaveStarted.Value)
+        if(currentAlivePlayers == 0 && hasWaveStarted.Value && IsServer)
         {
             hasWaveStarted.Value = false;
             gameOverText.enabled = true;
