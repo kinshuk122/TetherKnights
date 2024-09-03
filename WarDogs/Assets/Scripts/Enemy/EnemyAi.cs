@@ -214,26 +214,22 @@ public class EnemyAi : NetworkBehaviour
     {
         if (!agent.enabled)
         {
+            Debug.LogWarning("NavMeshAgent was disabled. Enabling now.");
             agent.enabled = true;
         }
-        
+
+        // Check if agent is on the NavMesh
         if (!agent.isOnNavMesh)
         {
-            // Move the agent to a position on the NavMesh
-            // This is just an example, you should replace this with your own logic
-            agent.Warp(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z));
-        }
-        
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(player.position, out hit, 1.0f, NavMesh.AllAreas))
-        {
-            agent.SetDestination(player.position);
-        }
-        else
-        {
-            // Find a position on the NavMesh that is as close as possible to the player's position and set that as the destination
-            // This is just an example, you should replace this with your own logic
-            agent.SetDestination(new Vector3(player.position.x, player.position.y + 1, player.position.z));
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(agent.transform.position, out hit, 1.0f, NavMesh.AllAreas))
+            {
+                agent.Warp(hit.position); 
+            }
+            else
+            {
+                return;
+            }
         }
         
         if (playerStats != null && playerStats.isDead)
@@ -310,7 +306,7 @@ public class EnemyAi : NetworkBehaviour
             {
                 if (hit.collider.CompareTag("Player"))
                 {
-                    hit.collider.GetComponent<PlayerStats>().health.Value -= damage.Value;
+                    hit.collider.GetComponent<PlayerStats>().health -= damage.Value;
                     audioSource.PlayOneShot(hitAudio, 0.75f);
                 }
 

@@ -9,7 +9,8 @@ public class PlayerStats : NetworkBehaviour
 {
     [Header("PlayerStats")] 
     public float maxHealth;
-    public NetworkVariable<float> health = new NetworkVariable<float>();
+    // public NetworkVariable<float> health = new NetworkVariable<float>();
+    public float health;
     public bool allowToHeal;
     public float damage;
     public float respawnTimer;
@@ -28,12 +29,12 @@ public class PlayerStats : NetworkBehaviour
 
     private void Update()
     {
-        if (health.Value <= maxHealth && allowToHeal)
+        if (health <= maxHealth && allowToHeal)
         {
-            health.Value += Time.deltaTime / 2;
+            health += Time.deltaTime / 2;
         }
 
-        if (health.Value <= 0)
+        if (health <= 0)
         {
             if (!isDead)
             {
@@ -51,7 +52,7 @@ public class PlayerStats : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("EnemyBullet") && health.Value >= -1f)
+        if (other.CompareTag("EnemyBullet") && health >= -1f)
         {
             allowToHeal = false;
             StartCoroutine(HealthBool());
@@ -79,7 +80,7 @@ public class PlayerStats : NetworkBehaviour
             fpsControllerScript.enabled = true;
             gunsScript.enabled = true;
             respawnTimer =+ respawnTimeIncrease;
-            health.Value = maxHealth;
+            health = maxHealth;
             allowToHeal = true;
         }
     }

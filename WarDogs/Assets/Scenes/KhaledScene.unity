@@ -5816,7 +5816,7 @@ PrefabInstance:
     - target: {fileID: 8791016969285932882, guid: 9c2110d4202b7614b84cbe693c54367b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.56
+      value: -1.663
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8523,30 +8523,6 @@ MonoBehaviour:
   enemiesAlive: 9
   enemiesToSpawn: 2
   wave: 1
-  spawnPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   activeSpawnPoints: []
   bossEnemy: {fileID: 11400000, guid: 74bafe4ea6ae2f44bb15ae4117696728, type: 2}
   reduceSpawnByDivision: 2
@@ -9814,6 +9790,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 3.18
       objectReference: {fileID: 0}
+    - target: {fileID: 8791016969285932882, guid: 9c2110d4202b7614b84cbe693c54367b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.544
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10286,7 +10267,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.08
+  m_VoxelSize: 0.1
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 74fe647746a381d4e9331a1580e9312b, type: 2}
   m_BuildHeightMesh: 0
@@ -10332,7 +10313,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.06333333
+  m_VoxelSize: 0.083333336
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 8911b839d92d46d488e1a2a46dca3cac, type: 2}
   m_BuildHeightMesh: 0
@@ -10373,9 +10354,9 @@ MonoBehaviour:
   SyncPositionX: 1
   SyncPositionY: 1
   SyncPositionZ: 1
-  SyncRotAngleX: 0
-  SyncRotAngleY: 0
-  SyncRotAngleZ: 0
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
@@ -56753,6 +56734,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 3.18
       objectReference: {fileID: 0}
+    - target: {fileID: 8791016969285932882, guid: 9c2110d4202b7614b84cbe693c54367b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.489
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -79692,6 +79678,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 8791016969285932882, guid: 9c2110d4202b7614b84cbe693c54367b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.728
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -104792,6 +104783,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 3.18
       objectReference: {fileID: 0}
+    - target: {fileID: 8791016969285932882, guid: 9c2110d4202b7614b84cbe693c54367b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.496
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -105229,6 +105225,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 8791016969285932882, guid: 9c2110d4202b7614b84cbe693c54367b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.73
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -108726,6 +108727,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 8791016969285932882, guid: 9c2110d4202b7614b84cbe693c54367b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.67
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

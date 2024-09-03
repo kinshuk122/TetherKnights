@@ -6,6 +6,7 @@ using System.Linq;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 public class WaveSpawner : NetworkBehaviour
@@ -26,7 +27,6 @@ public class WaveSpawner : NetworkBehaviour
     public int enemiesAlive = 0;
     public int enemiesToSpawn;
     public int wave = 1;
-    public GameObject[] spawnPoints;
     public List<GameObject> activeSpawnPoints = new List<GameObject>();
 
     [Header("Boss Wave Settings")]
@@ -154,6 +154,7 @@ public class WaveSpawner : NetworkBehaviour
                     }
                     
                     EnemyAi enemyAiScript = enemyInstance.GetComponent<EnemyAi>();
+                    
                     enemyAiScript.networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
                     
                     if (permanentPartTargetCount > 0)
