@@ -304,9 +304,10 @@ public class EnemyAi : NetworkBehaviour
             RaycastHit hit;
             if (Physics.Raycast(firePoint.transform.position, throwDirection, out hit, sightRange.Value))
             {
-                if (hit.collider.CompareTag("Player"))
+                PlayerStats playerStats = hit.collider.GetComponent<PlayerStats>();
+                if (playerStats != null && playerStats.health != null)
                 {
-                    hit.collider.GetComponent<PlayerStats>().health -= damage.Value;
+                    playerStats.health -= damage.Value;
                     audioSource.PlayOneShot(hitAudio, 0.75f);
                 }
 

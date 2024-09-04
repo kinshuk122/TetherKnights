@@ -135,26 +135,12 @@ public class WallHealth : NetworkBehaviour
                     {
                         RequestStartRepairingServerRpc();
                     }
-
-                    if (IsServer && repairCoroutine == null)
-                    {
-                        repairCoroutine = StartCoroutine(RepairOverTime());
-                    }
-
-                    if (IsServer && !audioSource.isPlaying)
-                    {
-                        audioSource.clip = repairAudio;
-                        audioSource.Play();
-                    }
                 }
                 else
                 {
-                    if (IsServer && repairCoroutine != null)
+                    if (IsClient)
                     {
-                        StopCoroutine(repairCoroutine);
-                        repairCoroutine = null;
-                        isRepairing.Value = false;
-                        audioSource.Stop();
+                        RequestStopRepairingServerRpc();
                     }
                 }
             }
@@ -206,6 +192,18 @@ public class WallHealth : NetworkBehaviour
             {
                 repairCoroutine = StartCoroutine(RepairOverTime());
             }
+        }
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestStopRepairingServerRpc(ServerRpcParams rpcParams = default)
+    {
+        if (repairCoroutine != null)
+        {
+            StopCoroutine(repairCoroutine);
+            repairCoroutine = null;
+            isRepairing.Value = false;
+            audioSource.Stop();
         }
     }
 }
