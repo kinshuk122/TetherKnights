@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -156,5 +157,14 @@ public class PermanentPartsHandler : NetworkBehaviour
     public void TakeDamage(float damage)
     {
         health.Value -= damage;
+    }
+
+    public void OnDisable()
+    {
+        Debug.Log("Permanent Part destroyed");
+        if (IsServer)
+        {
+            GameManager.instance.permanentParts.Value--;
+        }
     }
 }

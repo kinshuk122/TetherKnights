@@ -12,9 +12,11 @@ public class GameManager : NetworkBehaviour
     
     [Header("Players Settings")]
     public int currentAlivePlayers;
-
+    
     [Header("Wave Settings")] 
     public NetworkVariable<bool> hasWaveStarted = new NetworkVariable<bool>();
+    public NetworkVariable<int> permanentParts = new NetworkVariable<int>();
+    public NetworkVariable<bool> isGameOver = new NetworkVariable<bool>();
 
     [Header("Text Reference")] 
     public TextMeshProUGUI gameOverText;
@@ -27,9 +29,14 @@ public class GameManager : NetworkBehaviour
 
     void Update()
     {
-        if(currentAlivePlayers == 0 && hasWaveStarted.Value && IsServer)
+        if(currentAlivePlayers == 0 && hasWaveStarted.Value && IsServer || permanentParts.Value <= 0 && IsServer)
         {
             hasWaveStarted.Value = false;
+            isGameOver.Value = true;
+        }
+        
+        if(isGameOver.Value)
+        {
             gameOverText.enabled = true;
         }
     }
