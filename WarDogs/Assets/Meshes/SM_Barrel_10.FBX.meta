@@ -3,7 +3,12 @@ guid: dae001b01ff94524b905341cfb8932df
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MI_Barrel_09
+    second: {fileID: 2100000, guid: 712210ecae3d7f244af34c460ae29d3a, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

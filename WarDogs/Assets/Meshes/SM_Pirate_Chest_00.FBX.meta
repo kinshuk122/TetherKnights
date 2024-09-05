@@ -3,7 +3,13 @@ guid: dde27445e420e014f9cb6593477ec876
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MI_Pirate_Chest_00
+    second: {fileID: 1205505441410409254, guid: d6584715b60ac9247bd6b883d3c2d4a1,
+      type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
