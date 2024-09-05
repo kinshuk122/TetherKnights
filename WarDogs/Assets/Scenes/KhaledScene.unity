@@ -8651,7 +8651,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &212891030
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -51494,6 +51494,8 @@ MonoBehaviour:
   hasWaveStarted:
     m_InternalValue: 0
   permanentParts:
+    m_InternalValue: 2
+  isGameOver:
     m_InternalValue: 0
   gameOverText: {fileID: 1328137409}
 --- !u!114 &698980224
@@ -102344,7 +102346,7 @@ PrefabInstance:
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.2775
+      value: 1.5525
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}
