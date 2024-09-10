@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74af57b7b73b8a343b4a7b06ea8dbc5c, type: 3}
   m_Name: CrawlerEnemy_G
   m_EditorClassIdentifier: 
-  health: 100
+  health: 40
   damage: 5
   speed: 8
   increaseSpeedOnGettingAttacked: 2

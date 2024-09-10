@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74af57b7b73b8a343b4a7b06ea8dbc5c, type: 3}
   m_Name: SniperEnemy_G
   m_EditorClassIdentifier: 
-  health: 120
+  health: 80
   damage: 20
   speed: 2
   increaseSpeedOnGettingAttacked: 0
@@ -23,5 +23,5 @@ MonoBehaviour:
   enemyBullet: {fileID: 4074496659085174914, guid: 3bb0ef203717a484ea8bcba2960d97b4,
     type: 3}
   sightRange: 60
-  attackRange: 60
+  attackRange: 40
   increaseSightOnGettingAttacked: 15
