@@ -7,13 +7,13 @@ using UnityEngine.InputSystem;
 public class PermanentPartsHandler : NetworkBehaviour
 {
     [Header("PermanentPart settings")]
-    public NetworkVariable<float> health = new NetworkVariable<float>(writePerm: NetworkVariableWritePermission.Server);
-    public NetworkVariable<bool> isDestroyed = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<float> health = new NetworkVariable<float>();
+    public NetworkVariable<bool> isDestroyed = new NetworkVariable<bool>();
     public float maxHealth;
     
     [Header("Repairing")]
     public NetworkVariable<float> repairAmount = new NetworkVariable<float>();
-    public NetworkVariable<bool> isRepairing = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> isRepairing = new NetworkVariable<bool>();
     private PlayerInput playerInput;
     private Coroutine repairCoroutine;
 
@@ -24,8 +24,6 @@ public class PermanentPartsHandler : NetworkBehaviour
 
     private void Awake()
     {
-        repairAmount.Value = 5;
-        health.Value = 1100;
         maxHealth = health.Value;
         audioSource = GetComponent<AudioSource>();
     }
@@ -45,6 +43,15 @@ public class PermanentPartsHandler : NetworkBehaviour
             {
                 RepairPartServerRpc();
             }
+        }
+        
+        if (isDestroyed.Value)
+        {
+            this.gameObject.SetActive(false);
+        }
+        else if (!isDestroyed.Value && !this.gameObject.activeSelf)
+        {
+            this.gameObject.SetActive(true);
         }
         
         if (isDestroyed.Value && this.gameObject.activeSelf)

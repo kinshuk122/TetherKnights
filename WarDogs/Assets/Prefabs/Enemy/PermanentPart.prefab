@@ -261,12 +261,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health:
-    m_InternalValue: 0
+    m_InternalValue: 200
   isDestroyed:
     m_InternalValue: 0
-  maxHealth: 0
+  maxHealth: 200
   repairAmount:
-    m_InternalValue: 0
+    m_InternalValue: 5
   isRepairing:
     m_InternalValue: 0
   repairAudio: {fileID: 8300000, guid: 6a16debf4b158c940b44bf4ac3a9608a, type: 3}
