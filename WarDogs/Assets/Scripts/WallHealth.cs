@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -30,8 +31,15 @@ public class WallHealth : NetworkBehaviour
     public AudioClip repairAudio;
     private AudioSource audioSource;
 
+    [Header("UI Reference")] 
+    public GameObject healthTextCanvas;
+    private TextMeshProUGUI healthText;
+    
+    
     private void Awake()
     {
+        healthText = healthTextCanvas.GetComponentInChildren<TextMeshProUGUI>();
+        healthTextCanvas.SetActive(false);
         audioSource = GetComponent<AudioSource>();
         time = Random.Range(0, 15);
     }
@@ -48,6 +56,7 @@ public class WallHealth : NetworkBehaviour
 
     void Update()
     {
+        healthText.text = $"{health.Value}/{maxHealth}";
         if (!GameManager.instance.hasWaveStarted.Value)
         {
             return;
@@ -125,6 +134,7 @@ public class WallHealth : NetworkBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            healthTextCanvas.SetActive(true);
             playerInput = other.GetComponent<PlayerInput>();
 
             if (playerInput != null)
@@ -151,6 +161,7 @@ public class WallHealth : NetworkBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            healthTextCanvas.SetActive(false);
             playerInput = null;
 
             if (IsServer && repairCoroutine != null)

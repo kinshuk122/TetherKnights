@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,14 +23,21 @@ public class PermanentPartsHandler : NetworkBehaviour
     public AudioClip destroyAudio;
     private AudioSource audioSource;
 
+    [Header("UI Reference")]
+    public GameObject healthTextCanvas;
+    private TextMeshProUGUI[] healthText;
+    
     private void Awake()
     {
+        healthText = healthTextCanvas.GetComponentsInChildren<TextMeshProUGUI>();
+        healthTextCanvas.SetActive(false);
         maxHealth = health.Value;
         audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
+        
         if (IsServer)
         {
             if (health.Value <= 0 && !isDestroyed.Value)
@@ -68,6 +76,13 @@ public class PermanentPartsHandler : NetworkBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            healthTextCanvas.SetActive(true);
+            
+            foreach (var textComponent in healthText)
+            {
+                textComponent.text = $"{health.Value}/{maxHealth}";
+            }
+            
             playerInput = other.GetComponentInParent<PlayerInput>();
 
             if (playerInput != null)
@@ -108,6 +123,7 @@ public class PermanentPartsHandler : NetworkBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            healthTextCanvas.SetActive(false);
             playerInput = null;
 
             if (IsServer && repairCoroutine != null)
