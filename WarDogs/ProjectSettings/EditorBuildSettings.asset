@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MainScene.unity
     guid: 9eb06207f8ea1274a8aa6fea085d61bf
   - enabled: 0
-    path: Assets/Scenes/SampleScene_Kinshuk.unity
+    path: Assets/Scenes/SampleScene_Kinshuk_delete_this.unity
     guid: 709db5f1b0f0fb34abd667b39152e4bc
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7,

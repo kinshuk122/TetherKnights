@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44de6f69cad4fe449b34473bbd79331c, type: 3}
   m_Name: M4
   m_EditorClassIdentifier: 
-  damage: 20
+  damage: 30
   fireRate: 0.2
   spread: 0
   range: 100

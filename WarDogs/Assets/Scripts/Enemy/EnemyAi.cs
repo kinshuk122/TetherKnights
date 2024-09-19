@@ -8,8 +8,7 @@ using Random = UnityEngine.Random;
 
 public class EnemyAi : NetworkBehaviour
 {
-    //Increase speed of some enemies on chse state using navmesh agent component 
-    
+    //Increase speed of some enemies on chase state using navmesh agent component 
     [Header("General")]
     public EnemyAIScriptableObject enemyType;
     public NavMeshAgent agent;
@@ -54,13 +53,19 @@ public class EnemyAi : NetworkBehaviour
     public NetworkVariable<float> speed = new NetworkVariable<float>();
     public NetworkVariable<float> increaseSpeedOnGettingAttacked = new NetworkVariable<float>();
     private bool areAllPropertiesEqual = false;
-    
+
+        // Felix: I have some knowlege about planning Audio now. Triggering all sounds from within Unity is a strong possibily, but they probably won't end up in the Enemy AI master .cs
+        // Felix: Audio triggers (for e.G. Hitting Enemies) will probably move into the finite state machine as well.
+
     [Header("Audio Refernece")]
     public AudioClip permanentPartHitAudio;
     public AudioClip hitAudio;
     private AudioSource audioSource;
 
     private void Awake()
+
+        // Felix: Presumably, deciding which object to target will be part of the finite state machine, and will move there at some point.
+
     {
         GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject playerObject in playerObjects)
@@ -102,6 +107,7 @@ public class EnemyAi : NetworkBehaviour
     // }
 
     private void Update()
+
     {
         if (networkEnemyType.Value != Array.IndexOf(enemyAiScriptable, enemyType))
         {
@@ -401,6 +407,8 @@ public class EnemyAi : NetworkBehaviour
                 hasIncreasedSpeed = true;
             }
         }
+        
+        // Felix: Just for understanding: Why can't the materials not be assigned to the parents in Unity?
 
         bool hasChangedMaterial = false;
         if (!hasChangedMaterial)
@@ -421,6 +429,8 @@ public class EnemyAi : NetworkBehaviour
     }
 
     private (bool, string) ArePropertiesEqual()
+
+        // Felix: What's this function here?
     {
         if (damage.Value != enemyType.damage)
         {

@@ -29,11 +29,12 @@ public class WaveSpawner : NetworkBehaviour
     public int wave = 1;
     public List<GameObject> activeSpawnPoints = new List<GameObject>();
     
-    // Delete
+    // Felix: Delete
     [Header("Boss Wave Settings")]
     public EnemyAIScriptableObject bossEnemy; //Change to array if more bosses are introduced
     public int reduceSpawnByDivision = 2; //divide the spawn by this number to reduce the number of enemies spawned
     
+    // Felix: I'll mention this later as well, but those should work with fractions of 1 (e.G. "0.7" or "1.2", and the result should be rounded later in the script
     [Header("EnemySpawning")]
     public int additionalMaxEnemies = 2; //Gamedesigners vars
     // Spawning should be time based, to be discussed
@@ -81,7 +82,7 @@ public class WaveSpawner : NetworkBehaviour
         }
         
         // Felix: I'm very critical about this line, is going to be changed at some point.
-        // Felix: I would like to be able to trigger the next enemy wave on button press in Gamemode, i.E. after running the game, esc. create lobby. Then press "y" + "k" to trigger the next wave manually.
+        // Felix: I would like to be able to trigger the next enemy wave on button press in Gamemode, i.E. after running the game, esc. create lobby, sec, again. Then press "y" + "k" to trigger the next wave manually.
         
         if (enemiesAlive <= minEnemies)
         {
@@ -136,7 +137,7 @@ public class WaveSpawner : NetworkBehaviour
             enemiesToSpawn = maxEnemies;
         }
         // Felix: Does PercentageOfEnemiesToTargetPermPart controll the amount of enemies that targets them?
-        // Felix: Rechecked: All good. Note for later. This only works with values <= 1.
+        // Felix: Rechecked: All good. Note to myself: This only works with values <= 1.
         // Felix: Stuff like this is probably going to move to the state machine later on.
         int permanentPartTargetCount = Mathf.CeilToInt(numberOfEnemies * percentageOfEnemiesToTargetPermanentPart);
         int playerTargetCount = numberOfEnemies - permanentPartTargetCount;
@@ -189,7 +190,9 @@ public class WaveSpawner : NetworkBehaviour
             }
         }
     }
-    
+    // Felix : I'm not sure I understand the interaction between BreakSpawnEnemies () and the Public Int MinEnemies. 
+    // Felix: The next wave gets triggered anyway when EnemiesAlive <= MinEnemies, to reduce possible downtime. If this does not happen, the next wave is triggered after int duration, is that correct?
+
     private IEnumerator BreakSpawnEnemies(int duration, EnemyAIScriptableObject enemyType)
     {
         float startTime = Time.time;
