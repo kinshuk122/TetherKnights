@@ -73,7 +73,8 @@ namespace StarterAssets
 		private float _rotationVelocity;
 		private float _verticalVelocity;
 		private float _terminalVelocity = 53.0f;
-
+		public PlayerStats playerStats;
+		
 		// timeout deltatime
 		private float _jumpTimeoutDelta;
 		private float _fallTimeoutDelta;
@@ -111,6 +112,7 @@ namespace StarterAssets
 
 		private void Start()
 		{
+			playerStats = GetComponentInChildren<PlayerStats>();
 			_controller = GetComponent<CharacterController>();
 			_input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM
@@ -138,6 +140,11 @@ namespace StarterAssets
 
 		private void Update()
 		{
+			if (playerStats.isDead.Value)
+			{
+				return;
+			}
+			
 			if (_playerInput.currentControlScheme != "KeyboardMouse")
 			{
 				var keyboard = Keyboard.current;

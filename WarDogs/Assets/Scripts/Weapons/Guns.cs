@@ -37,6 +37,9 @@ public class Guns : NetworkBehaviour
     
     [Header("For Instantiating")]
     public GameObject bulletPrefab;
+
+    [Header("Player")] 
+    private PlayerStats playerStats;
     
    private void Awake()
     {
@@ -49,6 +52,11 @@ public class Guns : NetworkBehaviour
     private void Update()
     {
         if (!IsOwner)
+        {
+            return;
+        }
+
+        if (playerStats.isDead.Value)
         {
             return;
         }

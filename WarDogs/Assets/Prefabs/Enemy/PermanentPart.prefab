@@ -195,15 +195,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.98
-  m_fontSizeBase: 0.98
+  m_fontSize: 0.52
+  m_fontSizeBase: 0.52
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -499,7 +499,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health:
-    m_InternalValue: 200
+    m_InternalValue: 1200
   isDestroyed:
     m_InternalValue: 0
   maxHealth: 200
@@ -510,7 +510,6 @@ MonoBehaviour:
   repairAudio: {fileID: 8300000, guid: 6a16debf4b158c940b44bf4ac3a9608a, type: 3}
   destroyAudio: {fileID: 8300000, guid: 7751bf1ca3ef015418231495afabd538, type: 3}
   healthTextCanvas: {fileID: 532155678277288337}
-  healthText: []
 --- !u!208 &5607494513053140548
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -619,15 +618,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.98
-  m_fontSizeBase: 0.98
+  m_fontSize: 0.52
+  m_fontSizeBase: 0.52
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0

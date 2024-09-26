@@ -9,79 +9,113 @@ public class PlayerStats : NetworkBehaviour
 {
     [Header("PlayerStats")] 
     public float maxHealth;
-    // public NetworkVariable<float> health = new NetworkVariable<float>();
-    public float health;
-    public bool allowToHeal;
-    public float damage;
-    public float respawnTimer;
-    public float respawnTimeIncrease;
-    public bool isDead;
+    public NetworkVariable<float> health = new NetworkVariable<float>();
+    public NetworkVariable<bool> allowToHeal = new NetworkVariable<bool>();
+    public NetworkVariable<float> respawnTimer = new NetworkVariable<float>();
+    public NetworkVariable<float> respawnTimeIncrease = new NetworkVariable<float>();
+    public float healingAmount;
+    public NetworkVariable<bool> isDead = new NetworkVariable<bool>();
     
-    [Header("References")]
-    public FirstPersonController fpsControllerScript;
-    public Guns gunsScript;
-
+    [Header("Healing")]
+    public float secondsAfterHealAllowed;
+    private float timeSinceLastDamage;
+    
     private void Awake()
     {
-        fpsControllerScript = GetComponentInParent<FirstPersonController>();
         GameManager.instance.currentAlivePlayers++;
     }
 
     private void Update()
     {
-        if (health <= maxHealth && allowToHeal)
+        if (IsServer) 
         {
-            health += Time.deltaTime / 2;
-        }
+            timeSinceLastDamage += Time.deltaTime;
+            
+            if (timeSinceLastDamage >= secondsAfterHealAllowed && !isDead.Value)
+            {
+                allowToHeal.Value = true;
+            }
+            
+            if (health.Value < maxHealth && allowToHeal.Value)
+            {
+                health.Value += Time.deltaTime * healingAmount;
+            }
 
-        if (health <= 0)
-        {
-            if (!isDead)
+            if (health.Value <= 2 && !isDead.Value)
             {
                 GameManager.instance.currentAlivePlayers--;
-                isDead = true;
+                isDead.Value = true;
+                allowToHeal.Value = false;
+                // fpsControllerScript.enabled = false;
+                // gunsScript.enabled = false;
+                
+                respawnTimer.Value = respawnTimeIncrease.Value;
             }
             
-            allowToHeal = false;
-            Debug.Log("Dead");
-            fpsControllerScript.enabled = false;
-            gunsScript.enabled = false;
-            Respawn();
+            if (isDead.Value)
+            {
+                Debug.Log("Player is dead.");
+                RespawnCountdown(); 
+            }
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    [ServerRpc(RequireOwnership = false)]
+    public void TakeDamageServerRpc(float damage)
     {
-        if (other.CompareTag("EnemyBullet") && health >= -1f)
+        if (health.Value > 0)
         {
-            allowToHeal = false;
-            StartCoroutine(HealthBool());
+            health.Value -= damage;
+            timeSinceLastDamage = 0f;
+            allowToHeal.Value = false;
+
+            if (health.Value <= 0)
+            {
+                health.Value = 0;
+            }
         }
+    }
+
+    private void RespawnCountdown()
+    {
+        respawnTimer.Value -= Time.deltaTime;
+
+        if (respawnTimer.Value <= 0)
+        {
+            RespawnPlayer();
+        }
+    }
+
+    private void RespawnPlayer()
+    {
+        if (isDead.Value)
+        {
+            GameManager.instance.currentAlivePlayers++;
+            Debug.Log(GameManager.instance.currentAlivePlayers);
+            isDead.Value= false;
+
+            RespawnServerRpc();
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RespawnServerRpc()
+    {
+        // GameManager.instance.currentAlivePlayers++;
+        isDead.Value = false;
+        health.Value = maxHealth;
+        allowToHeal.Value = true;
     }
     
-    private IEnumerator HealthBool()
-    {
-        yield return new WaitForSeconds(5f);
-        allowToHeal = true;
-    }
-
-    private void Respawn()
-    {
-        respawnTimer -= Time.deltaTime;
-        
-        if(respawnTimer <= 0)
-        {
-            if (isDead)
-            {
-                GameManager.instance.currentAlivePlayers++;
-                isDead = false;
-            }
-            
-            fpsControllerScript.enabled = true;
-            gunsScript.enabled = true;
-            respawnTimer =+ respawnTimeIncrease;
-            health = maxHealth;
-            allowToHeal = true;
-        }
-    }
+    // [ClientRpc]
+    // private void RespawnClientRpc()
+    // {
+    //     if (!IsLocalPlayer) return;
+    //
+    //     fpsControllerScript.enabled = true;
+    //     gunsScript.enabled = true;
+    //
+    //     RespawnServerRpc();
+    // }
+    
 }

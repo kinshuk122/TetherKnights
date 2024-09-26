@@ -158,7 +158,7 @@ public class EnemyAi : NetworkBehaviour
 
         if (player.CompareTag("Player"))
         {
-            if (playerStats != null && playerStats.isDead)
+            if (playerStats != null && playerStats.isDead.Value)
             {
                 ChasePlayer();
             }
@@ -189,7 +189,7 @@ public class EnemyAi : NetworkBehaviour
                 if (targetType == "Player")
                 {
                     PlayerStats targetPlayerStats = selectedTarget.GetComponentInChildren<PlayerStats>();
-                    if (targetPlayerStats != null && !targetPlayerStats.isDead)
+                    if (targetPlayerStats != null && !targetPlayerStats.isDead.Value)
                     {
                         player = selectedTarget;
                         playerStats = targetPlayerStats;
@@ -232,14 +232,14 @@ public class EnemyAi : NetworkBehaviour
             }
         }
         
-        if (playerStats != null && playerStats.isDead)
+        if (playerStats != null && playerStats.isDead.Value)
         {
             playerInAttackRange = false;
 
             for (int i = targets.Count - 1; i >= 0; i--)
             {
                 PlayerStats otherPlayerStats = targets[i].GetComponentInChildren<PlayerStats>();
-                if (otherPlayerStats != null && !otherPlayerStats.isDead)
+                if (otherPlayerStats != null && !otherPlayerStats.isDead.Value)
                 {
                     player = targets[i];
                     playerStats = otherPlayerStats;
@@ -307,7 +307,7 @@ public class EnemyAi : NetworkBehaviour
                 PlayerStats playerStats = hit.collider.GetComponent<PlayerStats>();
                 if (playerStats != null && playerStats.health != null)
                 {
-                    playerStats.health -= damage.Value;
+                    playerStats.TakeDamageServerRpc(damage.Value);
                     audioSource.PlayOneShot(hitAudio, 0.75f);
                 }
 

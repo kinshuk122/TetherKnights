@@ -161,7 +161,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.53
   m_Height: 2
@@ -179,13 +179,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff065abcec98fd04a806f58b309ae2b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 12000
-  health: 12000
-  allowToHeal: 0
-  damage: 0
-  respawnTimer: 10
-  respawnTimeIncrease: 15
+  maxHealth: 300
+  health:
+    m_InternalValue: 300
+  allowToHeal:
+    m_InternalValue: 0
+  respawnTimer:
+    m_InternalValue: 10
+  respawnTimeIncrease:
+    m_InternalValue: 15
+  healingAmount: 30
   isDead: 0
+  secondsAfterHealAllowed: 5
   fpsControllerScript: {fileID: 8616685848737228371}
   gunsScript: {fileID: 8430555495381223321}
 --- !u!1 &7023753121861677455
@@ -467,6 +472,7 @@ MonoBehaviour:
   bulletHoleGraphic: {fileID: 0}
   bulletPrefab: {fileID: 4545883434879887161, guid: e399a04c2df9d4e4f8d36e5330b21768,
     type: 3}
+  playerStats: {fileID: 543925506011316845}
 --- !u!1 &8616685848737228372
 GameObject:
   m_ObjectHideFlags: 0
@@ -616,6 +622,7 @@ MonoBehaviour:
   TopClamp: 89
   BottomClamp: -89
   cinemachineVirtualCamera: {fileID: 467394095410685042}
+  playerStats: {fileID: 0}
 --- !u!114 &1978471637655604388
 MonoBehaviour:
   m_ObjectHideFlags: 0
