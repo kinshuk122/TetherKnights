@@ -139,18 +139,23 @@ public class WallHealth : NetworkBehaviour
 
             if (playerInput != null)
             {
-                if (playerInput.actions["Repair"].IsPressed())
+                NetworkBehaviour networkBehaviour = playerInput.GetComponent<NetworkBehaviour>();
+
+                if (networkBehaviour.OwnerClientId == NetworkManager.Singleton.LocalClientId)
                 {
-                    if (IsClient)
+                    if (playerInput.actions["Repair"].IsPressed())
                     {
-                        RequestStartRepairingServerRpc();
+                        if (IsClient)
+                        {
+                            RequestStartRepairingServerRpc();
+                        }
                     }
-                }
-                else
-                {
-                    if (IsClient)
+                    else
                     {
-                        RequestStopRepairingServerRpc();
+                        if (IsClient)
+                        {
+                            RequestStopRepairingServerRpc();
+                        }
                     }
                 }
             }

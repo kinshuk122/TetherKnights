@@ -11,7 +11,6 @@ public class PermanentPartsHandler : NetworkBehaviour
     public NetworkVariable<float> health = new NetworkVariable<float>();
     public NetworkVariable<bool> isDestroyed = new NetworkVariable<bool>();
     public float maxHealth;
-    public static int permanentParts;
     
     [Header("Repairing")]
     public NetworkVariable<float> repairAmount = new NetworkVariable<float>();
@@ -87,32 +86,37 @@ public class PermanentPartsHandler : NetworkBehaviour
 
             if (playerInput != null)
             {
-                if (playerInput.actions["Repair"].IsPressed())
-                {
-                    if (IsClient)
-                    {
-                        RequestStartRepairingServerRpc();
-                    }
+                NetworkBehaviour networkBehaviour = playerInput.GetComponent<NetworkBehaviour>();
 
-                    if (IsServer && repairCoroutine == null)
-                    {
-                        repairCoroutine = StartCoroutine(RepairOverTime());
-                    }
-
-                    if (IsServer && !audioSource.isPlaying)
-                    {
-                        audioSource.clip = repairAudio;
-                        audioSource.Play();
-                    }
-                }
-                else
+                if (networkBehaviour.OwnerClientId == NetworkManager.Singleton.LocalClientId)
                 {
-                    if (IsServer && repairCoroutine != null)
+                    if (playerInput.actions["Repair"].IsPressed())
                     {
-                        StopCoroutine(repairCoroutine);
-                        repairCoroutine = null;
-                        isRepairing.Value = false;
-                        audioSource.Stop();
+                        if (IsClient)
+                        {
+                            RequestStartRepairingServerRpc();
+                        }
+
+                        if (IsServer && repairCoroutine == null)
+                        {
+                            repairCoroutine = StartCoroutine(RepairOverTime());
+                        }
+
+                        if (IsServer && !audioSource.isPlaying)
+                        {
+                            audioSource.clip = repairAudio;
+                            audioSource.Play();
+                        }
+                    }
+                    else
+                    {
+                        if (IsServer && repairCoroutine != null)
+                        {
+                            StopCoroutine(repairCoroutine);
+                            repairCoroutine = null;
+                            isRepairing.Value = false;
+                            audioSource.Stop();
+                        }
                     }
                 }
             }
