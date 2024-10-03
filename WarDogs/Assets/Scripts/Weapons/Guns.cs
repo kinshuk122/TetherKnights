@@ -39,7 +39,7 @@ public class Guns : NetworkBehaviour
     public GameObject bulletPrefab;
 
     [Header("Player")] 
-    private PlayerStats playerStats;
+    public PlayerStats playerStats;
     
    private void Awake()
     {

@@ -8,11 +8,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
+using IObserver;
 
 public class WaveSpawner : NetworkBehaviour
 {
     public static WaveSpawner instance;
-    
+    private List<IDebugObserver> observers = new List<IDebugObserver>();
+
     [Header("WaveSystem")] 
     public GameObject enemyPrefab;
     private GameObject spawnPoint;
@@ -39,10 +41,6 @@ public class WaveSpawner : NetworkBehaviour
     public int additionalEnemiesPerWave = 2;
     public int additionalEnemiesPerBreaches = 2;
     
-    [Header("References")]
-    public TextMeshProUGUI waveNum; //These are for us to check the wave number
-    public TextMeshProUGUI enemiesLeft; //These are for us to check the number of enemies left
-    
     [Header("EnemyAI")]
     public EnemyAIScriptableObject[] enemyAiScriptable; //0:Assault, 1:Crawler, 2:Sniper
     private int totalEnemyTypes;
@@ -59,10 +57,8 @@ public class WaveSpawner : NetworkBehaviour
         totalEnemyTypes = enemyAiScriptable.Length;
     }
 
-    void Update() {
-        
-        // enemiesLeft.text = "Enemies Left: " + spawnedEnemies.Count.ToString(); //Display number of enemies left
-
+    void Update() 
+    {
         if (!IsOwner || !GameManager.instance.hasWaveStarted.Value)
         {
             return;
@@ -83,8 +79,8 @@ public class WaveSpawner : NetworkBehaviour
             if (!waveIncremented)
             {
                 wave++;
-                waveNum.text = "Wave: " + wave.ToString(); //Display number of waves
                 waveIncremented = true;
+                NotifyChanged("Wave",wave); //Observer Pattern
             }
 
             if (wave % 10 == 0 && activeSpawnPoints.Count >= 12) //if active spawn points are more than 50% boss wave 
@@ -111,27 +107,51 @@ public class WaveSpawner : NetworkBehaviour
         {
             waveIncremented = false;
         }
+        
+        NotifyChanged("EnemiesAlive", enemiesAlive); //Observer Pattern
+        NotifyChanged("EnemiesToSpawn", enemiesToSpawn); //Observer Pattern
+    }
+    
+    // Observer management
+    public void AddObserver(IDebugObserver observer)
+    {
+        observers.Add(observer);
+    }
+
+    public void RemoveObserver(IDebugObserver observer)
+    {
+        observers.Remove(observer);
+    }
+
+    private void NotifyChanged(string identifier, int changedValue)
+    {
+        Debug.Log(observers.Count);
+        foreach (var observer in observers)
+        {
+            observer.OnChanged(identifier, changedValue);
+        }
     }
     
     private void SpawnEnemies(int numberOfEnemies, EnemyAIScriptableObject enemyType)
     {
         // maxEnemies = maxEnemies + additionalMaxEnemies;
         enemiesToSpawn = ((minEnemies + (wave * additionalEnemiesPerWave) + (activeSpawnPoints.Count * additionalEnemiesPerBreaches)) - enemiesAlive);
-
+        
         if (enemiesToSpawn >= maxEnemies)
         {
             enemiesToSpawn = maxEnemies;
         }
 
         int permanentPartTargetCount = Mathf.CeilToInt(numberOfEnemies * percentageOfEnemiesToTargetPermanentPart);
-        int playerTargetCount = numberOfEnemies - permanentPartTargetCount;
+        int playerTargetCount = numberOfEnemies - permanentPartTargetCount; 
         
         for (int i = 0; i < numberOfEnemies; i++)
         {
             if (activeSpawnPoints.Count > 0)
             {
                 spawnPoint = activeSpawnPoints[Random.Range(0, activeSpawnPoints.Count)];
-
+                NotifyChanged("ActiveSpawnPoint", activeSpawnPoints.Count); //Observer Pattern, its called when a spawn point is used
+                
                 if (IsServer)
                 {
                     if (randomiseSpawn)

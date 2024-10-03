@@ -11,6 +11,7 @@ public class PermanentPartsHandler : NetworkBehaviour
     public NetworkVariable<float> health = new NetworkVariable<float>();
     public NetworkVariable<bool> isDestroyed = new NetworkVariable<bool>();
     public float maxHealth;
+    public static int permanentParts;
     
     [Header("Repairing")]
     public NetworkVariable<float> repairAmount = new NetworkVariable<float>();
@@ -37,7 +38,6 @@ public class PermanentPartsHandler : NetworkBehaviour
 
     void Update()
     {
-        
         if (IsServer)
         {
             if (health.Value <= 0 && !isDestroyed.Value)
@@ -181,7 +181,7 @@ public class PermanentPartsHandler : NetworkBehaviour
     {
         health.Value -= damage;
     }
-
+    
     public void OnDisable()
     {
         Debug.Log("Permanent Part destroyed");

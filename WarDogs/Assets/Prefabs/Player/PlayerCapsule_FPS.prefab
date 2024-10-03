@@ -181,7 +181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 300
   health:
-    m_InternalValue: 300
+    m_InternalValue: 3000
   allowToHeal:
     m_InternalValue: 0
   respawnTimer:
@@ -189,10 +189,9 @@ MonoBehaviour:
   respawnTimeIncrease:
     m_InternalValue: 15
   healingAmount: 30
-  isDead: 0
+  isDead:
+    m_InternalValue: 0
   secondsAfterHealAllowed: 5
-  fpsControllerScript: {fileID: 8616685848737228371}
-  gunsScript: {fileID: 8430555495381223321}
 --- !u!1 &7023753121861677455
 GameObject:
   m_ObjectHideFlags: 0
