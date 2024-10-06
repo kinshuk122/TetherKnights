@@ -38,9 +38,8 @@ public class WaveSpawner : NetworkBehaviour
     [Header("EnemySpawning")]
     public int additionalMaxEnemies = 2; //Gamedesigners vars
     public int minEnemies; //Spawn next wave when only this many enemies are left
-    public int additionalEnemiesPerWave = 2;
-    public int additionalEnemiesPerBreaches = 2;
-    
+    public float additionalEnemiesPerWave = 2f;
+    public float additionalEnemiesPerBreaches = 2f;    
     [Header("EnemyAI")]
     public EnemyAIScriptableObject[] enemyAiScriptable; //0:Assault, 1:Crawler, 2:Sniper
     private int totalEnemyTypes;
@@ -134,9 +133,7 @@ public class WaveSpawner : NetworkBehaviour
     private void SpawnEnemies(int numberOfEnemies, EnemyAIScriptableObject enemyType)
     {
         // maxEnemies = maxEnemies + additionalMaxEnemies;
-        enemiesToSpawn = ((minEnemies + (wave * additionalEnemiesPerWave) + (activeSpawnPoints.Count * additionalEnemiesPerBreaches)) - enemiesAlive);
-        
-        if (enemiesToSpawn >= maxEnemies)
+        enemiesToSpawn = Mathf.CeilToInt((minEnemies + (wave * additionalEnemiesPerWave) + (activeSpawnPoints.Count * additionalEnemiesPerBreaches)) - enemiesAlive);        if (enemiesToSpawn >= maxEnemies)
         {
             enemiesToSpawn = maxEnemies;
         }
