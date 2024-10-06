@@ -463,6 +463,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b55774b41e94ca74fa8fb440eefeeb44, type: 2}
   - {fileID: 11400000, guid: ea440fb9104592a43924ae0e46a458b8, type: 2}
   - {fileID: 11400000, guid: d9eca86b6f073284f8d131f4636b3342, type: 2}
+  bulletsLeft: 0
+  bulletsShot: 0
   gunTransform: {fileID: 5742111584079255239}
   gunReloadBar: {fileID: 0}
   colorIntensity: 0
@@ -614,19 +616,21 @@ MonoBehaviour:
   SpeedChangeRate: 10
   JumpHeight: 1.2
   Gravity: -50
-  JumpTimeout: 0.1
+  JumpTimeout: 0.5
   FallTimeout: 0.15
   Grounded: 1
-  GroundedOffset: -0.2
-  GroundedRadius: 0.55
+  GroundedOffset: -1.37
+  GroundedRadius: 0.41
   GroundLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 4294967295
   CinemachineCameraTarget: {fileID: 4135013735270702863}
   TopClamp: 89
   BottomClamp: -89
   cinemachineVirtualCamera: {fileID: 467394095410685042}
   playerStats: {fileID: 0}
+  crouchHeight: 0.5
+  crouchSpeed: 2
 --- !u!114 &1978471637655604388
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -92,6 +92,14 @@ namespace StarterAssets
 		[Header("Shop System")] 
 		private Guns gunsScript;
 		
+		[Header("Crouching")]
+		public float crouchHeight = 0.5f;
+		public float crouchSpeed = 2.0f;
+		private float originalHeight;
+		private bool isCrouching = false;
+		private float originalMoveSpeed;
+		private float originalSprintSpeed;
+        
 		private bool IsCurrentDeviceMouse
 		{
 			get
@@ -107,7 +115,8 @@ namespace StarterAssets
 		private void Awake()
 		{
 			gunsScript = GetComponentInChildren<Guns>();
-			
+			_controller = GetComponent<CharacterController>();
+			originalHeight = _controller.height;
 			// get a reference to our main camera
 			if (_mainCamera == null)
 			{
@@ -126,6 +135,9 @@ namespace StarterAssets
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
 
+			originalMoveSpeed = MoveSpeed;
+			originalSprintSpeed = SprintSpeed;
+			
 			// reset our timeouts on start
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
@@ -167,6 +179,7 @@ namespace StarterAssets
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
+			Crouch();
 		}
 
 		private void LateUpdate()
@@ -197,7 +210,7 @@ namespace StarterAssets
 				_cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
 				// Update Cinemachine camera target pitch
-				CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+					CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
 
 				// rotate the player left and right
 				transform.Rotate(Vector3.up * _rotationVelocity);
@@ -212,6 +225,17 @@ namespace StarterAssets
 
 			// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
+			if (isCrouching)
+			{
+				MoveSpeed = crouchSpeed;
+				SprintSpeed = crouchSpeed;
+			}
+			else
+			{
+				MoveSpeed = originalMoveSpeed;
+				SprintSpeed = originalSprintSpeed;
+			}
+			
 			// note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
 			// if there is no input, set the target speed to 0
 			if (_input.move == Vector2.zero) targetSpeed = 0.0f;
@@ -321,6 +345,22 @@ namespace StarterAssets
 			Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
 		}
 
+		private void Crouch()
+		{
+#if ENABLE_INPUT_SYSTEM
+			if (_playerInput.actions["Crouch"].IsPressed())
+			{
+				_controller.height = crouchHeight;
+				isCrouching = true;
+			}
+			else
+			{
+				_controller.height = originalHeight;
+				isCrouching = false;
+			}
+#endif
+		}
+		
 		public void BoughtItem(ShopItemManager.ItemType itemType)
 		{
 			Debug.Log("Bought item: " + itemType);
