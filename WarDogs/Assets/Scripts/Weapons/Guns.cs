@@ -9,10 +9,11 @@ using UnityEngine.UI;
 public class Guns : NetworkBehaviour
 {
     [Header("Gun Stats scriptable object")]
-    public GunsScriptableObjects gunStats;
+    public GunsScriptableObjects currentGunStat;
+    public GunsScriptableObjects[] gunsArray; //M4, LMG, Revolver, SMG
     
     [Header("Guns General Stats")]
-    private int bulletsLeft, bulletsShot;
+    public int bulletsLeft, bulletsShot;
     public Transform gunTransform;
     private Vector3 direction;
     private float x;
@@ -45,7 +46,7 @@ public class Guns : NetworkBehaviour
     {
         fpsCam = Camera.main;
         gunReloadBar = GameObject.Find("ReloadSlider").GetComponent<Slider>();
-        bulletsLeft = gunStats.magazineSize;
+        bulletsLeft = currentGunStat.magazineSize;
         readyToShoot = true;
     }
 
@@ -67,22 +68,22 @@ public class Guns : NetworkBehaviour
         Quaternion rotation = Quaternion.LookRotation(direction);
         gunTransform.rotation = rotation;
 
-        gunReloadBar.maxValue = gunStats.magazineSize;
+        gunReloadBar.maxValue = currentGunStat.magazineSize;
         gunReloadBar.value = bulletsLeft;
     }
 
     private void MyInput()
     {
-        shooting = gunStats.allowButtonHold ? Input.GetKey(KeyCode.Mouse0) : Input.GetKeyDown(KeyCode.Mouse0);
+        shooting = currentGunStat.allowButtonHold ? Input.GetKey(KeyCode.Mouse0) : Input.GetKeyDown(KeyCode.Mouse0);
 
-        if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < gunStats.magazineSize && !reloading)
+        if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < currentGunStat.magazineSize && !reloading)
         {
             StartCoroutine(Reload());
         }
 
         if (readyToShoot && shooting && !reloading && bulletsLeft > 0)
         {
-            bulletsShot = gunStats.bulletsPerTap;
+            bulletsShot = currentGunStat.bulletsPerTap;
             Shoot();
         }
     }
@@ -91,20 +92,20 @@ public class Guns : NetworkBehaviour
     {
         readyToShoot = false;
 
-        x = Random.Range(-gunStats.spread, gunStats.spread);
-        y = Random.Range(-gunStats.spread, gunStats.spread);
+        x = Random.Range(-currentGunStat.spread, currentGunStat.spread);
+        y = Random.Range(-currentGunStat.spread, currentGunStat.spread);
         direction = fpsCam.transform.forward + new Vector3(x, y, 0);
 
         RaycastHit rayHit;
 
-        if (Physics.Raycast(attackPoint.position, direction, out rayHit, gunStats.range, whatIsEnemy))
+        if (Physics.Raycast(attackPoint.position, direction, out rayHit, currentGunStat.range, whatIsEnemy))
         {
             if (rayHit.collider.CompareTag("Enemy"))
             {
                 if (IsClient)
                 {
                     // Request the server to handle the damage
-                    rayHit.collider.GetComponent<EnemyAi>().TakeDamageServerRpc(gunStats.damage);
+                    rayHit.collider.GetComponent<EnemyAi>().TakeDamageServerRpc(currentGunStat.damage);
                 }
             }
         }
@@ -114,11 +115,11 @@ public class Guns : NetworkBehaviour
         bulletsLeft--;
         bulletsShot--;
 
-        Invoke("ResetShot", gunStats.fireRate);
+        Invoke("ResetShot", currentGunStat.fireRate);
 
         if (bulletsShot > 0 && bulletsLeft > 0)
         {
-            Invoke("Shoot", gunStats.fireRate);
+            Invoke("Shoot", currentGunStat.fireRate);
         }
     }
 
@@ -150,9 +151,9 @@ public class Guns : NetworkBehaviour
         reloading = true;
         float elapsedTime = 0f;
 
-        while (elapsedTime < gunStats.reloadTime)
+        while (elapsedTime < currentGunStat.reloadTime)
         {
-            gunReloadBar.value = Mathf.Lerp(0, gunStats.magazineSize, elapsedTime / gunStats.reloadTime);
+            gunReloadBar.value = Mathf.Lerp(0, currentGunStat.magazineSize, elapsedTime / currentGunStat.reloadTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -162,7 +163,7 @@ public class Guns : NetworkBehaviour
 
     private void ReloadFinished()
     {
-        bulletsLeft = gunStats.magazineSize;
+        bulletsLeft = currentGunStat.magazineSize;
         reloading = false;
     }
 
@@ -172,6 +173,6 @@ public class Guns : NetworkBehaviour
         Gizmos.color = Color.red;
         Vector3 startPos = fpsCam.transform.position;
         Vector3 direction = fpsCam.transform.forward;
-        Gizmos.DrawLine(startPos, startPos + direction * gunStats.range);
+        Gizmos.DrawLine(startPos, startPos + direction * currentGunStat.range);
     }
 }

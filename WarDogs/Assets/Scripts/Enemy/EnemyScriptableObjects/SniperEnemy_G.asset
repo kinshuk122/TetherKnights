@@ -18,10 +18,10 @@ MonoBehaviour:
   increaseSpeedOnGettingAttacked: 0
   isGroundEnemy: 1
   isBossEnemy: 0
-  timeBetweenAttacks: 4
+  timeBetweenAttacks: 7
   throwSpeed: 500
   enemyBullet: {fileID: 4074496659085174914, guid: 3bb0ef203717a484ea8bcba2960d97b4,
     type: 3}
   sightRange: 60
-  attackRange: 40
+  attackRange: 25
   increaseSightOnGettingAttacked: 15

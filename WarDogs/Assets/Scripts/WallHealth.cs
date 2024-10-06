@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class WallHealth : NetworkBehaviour
 {
-    public NetworkVariable<float> health = new NetworkVariable<float>(30f);
+    public NetworkVariable<float> health = new NetworkVariable<float>(60f);
     public float maxHealth;
     public NetworkVariable<float> timeCounter = new NetworkVariable<float>();
     private float time;
@@ -48,7 +48,7 @@ public class WallHealth : NetworkBehaviour
     {
         if (IsServer)
         {
-            health.Value = 30f;
+            health.Value = 60f;
             maxHealth = health.Value;
             repairAmount.Value = 5f;
         }
@@ -75,9 +75,9 @@ public class WallHealth : NetworkBehaviour
 
                 if (timeCounter.Value >= time)
                 {
-                    damage = Random.Range(0, 15);
+                    damage = Random.Range(0, 10);
                     health.Value -= damage;
-                    time = Random.Range(0, 15);
+                    time = Random.Range(0, 10);
                     timeCounter.Value = 0f;
                 }
             }
@@ -143,7 +143,7 @@ public class WallHealth : NetworkBehaviour
 
                 if (networkBehaviour.OwnerClientId == NetworkManager.Singleton.LocalClientId)
                 {
-                    if (playerInput.actions["Repair"].IsPressed())
+                    if (playerInput.actions["Interact"].IsPressed())
                     {
                         if (IsClient)
                         {
@@ -156,7 +156,7 @@ public class WallHealth : NetworkBehaviour
                         {
                             RequestStopRepairingServerRpc();
                         }
-                    }
+                    } 
                 }
             }
         }

@@ -92,15 +92,6 @@ public class EnemyAi : NetworkBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    // private void Start()
-    // {
-    //     if (IsServer)
-    //     {
-    //         // Initialize Network Variables on the server
-    //         networkHealth.Value = enemyType.health;
-    //     }
-    // }
-
     private void Update()
     {
         if (networkEnemyType.Value != Array.IndexOf(enemyAiScriptable, enemyType))

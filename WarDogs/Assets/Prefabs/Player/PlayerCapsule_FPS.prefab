@@ -457,7 +457,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419dd3dabf23c6749bb3084d39204d77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gunStats: {fileID: 11400000, guid: 047fa2dec9fc9f9478812c2110494e71, type: 2}
+  currentGunStat: {fileID: 11400000, guid: 047fa2dec9fc9f9478812c2110494e71, type: 2}
+  gunsArray:
+  - {fileID: 11400000, guid: 047fa2dec9fc9f9478812c2110494e71, type: 2}
+  - {fileID: 11400000, guid: b55774b41e94ca74fa8fb440eefeeb44, type: 2}
+  - {fileID: 11400000, guid: ea440fb9104592a43924ae0e46a458b8, type: 2}
+  - {fileID: 11400000, guid: d9eca86b6f073284f8d131f4636b3342, type: 2}
   gunTransform: {fileID: 5742111584079255239}
   gunReloadBar: {fileID: 0}
   colorIntensity: 0

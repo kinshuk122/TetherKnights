@@ -125,7 +125,6 @@ public class WaveSpawner : NetworkBehaviour
 
     private void NotifyChanged(string identifier, int changedValue)
     {
-        Debug.Log(observers.Count);
         foreach (var observer in observers)
         {
             observer.OnChanged(identifier, changedValue);

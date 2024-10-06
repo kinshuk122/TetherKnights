@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: M4
   m_EditorClassIdentifier: 
   damage: 20
-  fireRate: 0.2
+  fireRate: 0.3
   spread: 0
   range: 100
   reloadTime: 2

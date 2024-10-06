@@ -90,7 +90,7 @@ public class PermanentPartsHandler : NetworkBehaviour
 
                 if (networkBehaviour.OwnerClientId == NetworkManager.Singleton.LocalClientId)
                 {
-                    if (playerInput.actions["Repair"].IsPressed())
+                    if (playerInput.actions["Interact"].IsPressed())
                     {
                         if (IsClient)
                         {

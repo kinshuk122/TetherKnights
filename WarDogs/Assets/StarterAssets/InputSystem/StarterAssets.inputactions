@@ -24,7 +24,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Repair",
+                    "name": "Interact",
                     "type": "Button",
                     "id": "980e881e-182c-404c-8cbf-3d09fdb48fef",
                     "expectedControlType": "Button",
@@ -182,7 +182,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Repair",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

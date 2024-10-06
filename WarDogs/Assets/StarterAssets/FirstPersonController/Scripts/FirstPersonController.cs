@@ -20,7 +20,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM
 	[RequireComponent(typeof(PlayerInput))]
 #endif
-	public class FirstPersonController : NetworkBehaviour
+	public class FirstPersonController : NetworkBehaviour, PlayerCustomerShop
 	{
 		[Header("Player")]
 		[Tooltip("Move speed of the character in m/s")]
@@ -89,6 +89,9 @@ namespace StarterAssets
 
 		private const float _threshold = 0.01f;
 
+		[Header("Shop System")] 
+		private Guns gunsScript;
+		
 		private bool IsCurrentDeviceMouse
 		{
 			get
@@ -103,6 +106,8 @@ namespace StarterAssets
 
 		private void Awake()
 		{
+			gunsScript = GetComponentInChildren<Guns>();
+			
 			// get a reference to our main camera
 			if (_mainCamera == null)
 			{
@@ -314,6 +319,56 @@ namespace StarterAssets
 
 			// when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
 			Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
+		}
+
+		public void BoughtItem(ShopItemManager.ItemType itemType)
+		{
+			Debug.Log("Bought item: " + itemType);
+			ReplaceGun(itemType);
+			//Set up the item changes eg - if bought weapon change scriptable, using switch case
+		}
+
+		public bool TrySpendCandy(int amount)
+		{
+			if(CandyCollecterHandler.instance.playerCandyCount.Value >= amount)
+			{
+				ServerTrySpendCandyServerRPC(amount);
+				return true;
+
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		[ServerRpc]
+		public void ServerTrySpendCandyServerRPC(int amount, ServerRpcParams rpcParams = default)
+		{
+			if(CandyCollecterHandler.instance.playerCandyCount.Value >= amount)
+			{
+				CandyCollecterHandler.instance.playerCandyCount.Value -= amount;
+			}
+		}
+		
+		public void ReplaceGun(ShopItemManager.ItemType itemType)
+		{
+			switch (itemType)
+			{
+				case ShopItemManager.ItemType.GunLMG:
+					gunsScript.currentGunStat = gunsScript.gunsArray[1];
+					break;
+				case ShopItemManager.ItemType.GunSMG:
+					gunsScript.currentGunStat = gunsScript.gunsArray[3];
+					break;
+				case ShopItemManager.ItemType.GunRevolver: 
+					gunsScript.currentGunStat = gunsScript.gunsArray[2];
+					break;
+				default:
+					Debug.Log("Invalid item type");
+					break;
+			}
+			gunsScript.bulletsLeft = gunsScript.currentGunStat.magazineSize;
 		}
 	}
 }
