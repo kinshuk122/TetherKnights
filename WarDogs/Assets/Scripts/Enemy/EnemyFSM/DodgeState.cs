@@ -26,7 +26,7 @@ public class DodgeState : BaseState
         dodgeSpeed = model.dodgeSpeed;
         target = model.target;
         dodgeTimer = model.dodgeTimer;
-        int dodgeDirection = (Random.Range(0, 2) * 2 - 1) * 2; // Generates either -2 or 2
+        int dodgeDirection = (Random.Range(0, 3) * 2 - 1) * 3; // Generates either -3 or 3
         Vector3 towardsPlayer = (target.position - agent.transform.position).normalized;
         Vector3 dodgeVector = Vector3.Cross(towardsPlayer, Vector3.up) * dodgeDirection;
         dodgePosition = agent.transform.position + dodgeVector;

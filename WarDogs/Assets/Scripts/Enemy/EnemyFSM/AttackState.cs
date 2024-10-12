@@ -14,7 +14,6 @@ public class AttackState : BaseState
 
     [Header("Bools")]
     private bool alreadyAttacked;
-
     
     public AttackState(EnemyStateMachine StateMachine) : base(StateMachine)
     {
@@ -40,10 +39,18 @@ public class AttackState : BaseState
         AttackPlayer();
 
         float distanceToTarget = Vector3.Distance(agent.transform.position, target.position);
-        if (target == null || distanceToTarget > attackRange) // Check if the player is out of attack range
+        if (target == null || distanceToTarget > attackRange)
         {
             model.ChangeState(model.chaseState);
             model.playerInLineOfSight = false;
+        }
+
+        if(model.playerStats != null)
+        {
+            if (model.playerStats.isDead.Value)
+            {
+                model.ChangeState(model.chaseState);
+            }
         }
     }
 
