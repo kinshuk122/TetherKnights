@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 public class PermanentPartsHandler : NetworkBehaviour
 {
     [Header("PermanentPart settings")]
-    public NetworkVariable<float> health = new NetworkVariable<float>();
+    public NetworkVariable<float> health = new NetworkVariable<float>(900f);
     public NetworkVariable<bool> isDestroyed = new NetworkVariable<bool>();
     public float maxHealth;
     

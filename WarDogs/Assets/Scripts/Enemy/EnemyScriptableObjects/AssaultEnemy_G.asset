@@ -16,7 +16,7 @@ MonoBehaviour:
   damage: 7
   speed: 5
   increaseSpeedOnGettingAttacked: 1.5
-  isGroundEnemy: 0
+  isGroundEnemy: 1
   isBossEnemy: 0
   timeBetweenAttacks: 3
   throwSpeed: 500

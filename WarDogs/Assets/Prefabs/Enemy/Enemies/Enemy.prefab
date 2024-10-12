@@ -120,8 +120,8 @@ GameObject:
   - component: {fileID: 6193323903229226}
   - component: {fileID: 1401839599183363187}
   - component: {fileID: 5001298241020716905}
-  - component: {fileID: 1435545599346148508}
   - component: {fileID: 4103380373084980409}
+  - component: {fileID: 995607692403085504}
   m_Layer: 8
   m_Name: Enemy
   m_TagString: Enemy
@@ -348,8 +348,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3180745495
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  GlobalObjectIdHash: 312201890
+  InScenePlacedSourceGlobalObjectIdHash: 2848631713
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -357,58 +357,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &1435545599346148508
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9189114959047826070}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c4e9993146b98e4b8496001d984723b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyType: {fileID: 11400000, guid: 5e5e7ad6347f35646af7df934145e64e, type: 2}
-  agent: {fileID: 1401839599183363187}
-  baseOffset: 2
-  player: {fileID: 5365462296395314267}
-  targets: []
-  enemyBulletGo: {fileID: 4074496659085174914, guid: 3bb0ef203717a484ea8bcba2960d97b4,
-    type: 3}
-  isActive: 0
-  networkEnemyType:
-    m_InternalValue: 0
-  enemyAiScriptable:
-  - {fileID: 11400000, guid: 5e5e7ad6347f35646af7df934145e64e, type: 2}
-  - {fileID: 11400000, guid: 12799ecb41aff074d9273ad6f42c7895, type: 2}
-  - {fileID: 11400000, guid: 1e47d077b78b1b3428a29392151943d9, type: 2}
-  enemyBullet: {fileID: 4074496659085174914, guid: 3bb0ef203717a484ea8bcba2960d97b4,
-    type: 3}
-  groundEnemyMaterial: {fileID: 2100000, guid: d91b929d8ba8f26499dc1f93d614204f, type: 2}
-  flyingEnemyMaterial: {fileID: 2100000, guid: df8bdb96ef084f94287f44aab5e20606, type: 2}
-  firePoint: {fileID: 5600027865519836041}
-  dodgeSpeed: 10
-  dodgeCooldown: 4
-  playerInAttackRange: 0
-  playerInLineOfSight: 0
-  increaseBossSpeed: 20
-  bossHealthThreshold: 0.5
-  networkHealth:
-    m_InternalValue: 120
-  damage:
-    m_InternalValue: 0
-  sightRange:
-    m_InternalValue: 0
-  attackRange:
-    m_InternalValue: 0
-  speed:
-    m_InternalValue: 0
-  increaseSpeedOnGettingAttacked:
-    m_InternalValue: 0
-  permanentPartHitAudio: {fileID: 8300000, guid: cdb32251ad7a59c448f009ea514632e5,
-    type: 3}
-  hitAudio: {fileID: 8300000, guid: 86d16a93195de7c428343dfa204709ac, type: 3}
 --- !u!114 &4103380373084980409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,3 +388,45 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &995607692403085504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9189114959047826070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ff032614478cc24ca8e99f405c5d0ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyType: {fileID: 11400000, guid: 1e47d077b78b1b3428a29392151943d9, type: 2}
+  agent: {fileID: 0}
+  baseOffset: 2
+  target: {fileID: 0}
+  playerStats: {fileID: 0}
+  _targets: []
+  firePoint: {fileID: 5600027865519836041}
+  enemyAiScriptable:
+  - {fileID: 11400000, guid: 5e5e7ad6347f35646af7df934145e64e, type: 2}
+  - {fileID: 11400000, guid: 12799ecb41aff074d9273ad6f42c7895, type: 2}
+  - {fileID: 11400000, guid: 1e47d077b78b1b3428a29392151943d9, type: 2}
+  health:
+    m_InternalValue: 0
+  damage:
+    m_InternalValue: 5
+  sightRange:
+    m_InternalValue: 20
+  attackRange:
+    m_InternalValue: 10
+  speed:
+    m_InternalValue: 0
+  increaseSpeedOnGettingAttacked:
+    m_InternalValue: 0
+  networkEnemyType:
+    m_InternalValue: 0
+  dodgeSpeed: 5
+  dodgeCooldown: 3
+  dodgeTimer: 0
+  groundEnemyMaterial: {fileID: 2100000, guid: df8bdb96ef084f94287f44aab5e20606, type: 2}
+  flyingEnemyMaterial: {fileID: 2100000, guid: d91b929d8ba8f26499dc1f93d614204f, type: 2}

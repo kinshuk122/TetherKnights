@@ -48,7 +48,7 @@ public class WallHealth : NetworkBehaviour
     {
         if (IsServer)
         {
-            health.Value = 60f;
+            health.Value = 2f; //Set to be 60
             maxHealth = health.Value;
             repairAmount.Value = 5f;
         }

@@ -160,7 +160,6 @@ public class WaveSpawner : NetworkBehaviour
                     }
 
                     enemyType = enemyAiScriptable[selectedEnemyTypeId.Value]; // All clients use the same enemy type
-
                     GameObject enemyInstance = Instantiate(enemyPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
                     NetworkObject networkObject = enemyInstance.GetComponent<NetworkObject>();
@@ -169,22 +168,22 @@ public class WaveSpawner : NetworkBehaviour
                         networkObject.Spawn();
                     }
                     
-                    EnemyAi enemyAiScript = enemyInstance.GetComponent<EnemyAi>();
+                    EnemyStateMachine enemyStateMachine = enemyInstance.GetComponent<EnemyStateMachine>();
                     
-                    enemyAiScript.networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
+                    enemyStateMachine.networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
                     
                     if (permanentPartTargetCount > 0)
                     {
-                        enemyAiScript.AssignTarget("PermanentPart");
+                        enemyStateMachine.AssignTarget("PermanentPart");
                         permanentPartTargetCount--;
                     }
                     else
                     {
-                        enemyAiScript.AssignTarget("Player");
+                        enemyStateMachine.AssignTarget("Player");
                         playerTargetCount--;
                     }
 
-                    enemyInstance.GetComponent<EnemyAi>().networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
+                    enemyInstance.GetComponent<EnemyStateMachine>().networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
                     enemiesAlive++;
                 }
             }

@@ -14,7 +14,7 @@ public class EnemyAi : NetworkBehaviour
     public EnemyAIScriptableObject enemyType;
     public NavMeshAgent agent;
     public float baseOffset; //Change it to 4 once camera works perfectly
-    public Transform player;
+    public Transform target;
     public List<Transform> targets;
     private PlayerStats playerStats;
     public GameObject enemyBulletGo;
@@ -80,12 +80,12 @@ public class EnemyAi : NetworkBehaviour
 
         if (targets.Count > 0)
         {
-            player = targets[Random.Range(0, targets.Count)];
+            target = targets[Random.Range(0, targets.Count)];
         }
 
-        if (player != null && player.gameObject.CompareTag("Player"))
+        if (target != null && target.gameObject.CompareTag("Player"))
         {
-            playerStats = player.GetComponentInChildren<PlayerStats>();
+            playerStats = target.GetComponentInChildren<PlayerStats>();
         }
 
         agent = GetComponent<NavMeshAgent>();
@@ -122,11 +122,11 @@ public class EnemyAi : NetworkBehaviour
         Vector3 raycastOrigin = firePoint != null ? firePoint.transform.position : transform.position + Vector3.up;
         foreach (var collider in collidersInAttackRange)
         {
-            if (collider.transform == player)
+            if (collider.transform == target)
             {
                 playerInAttackRange = true;
 
-                Vector3 directionToPlayer = (player.position - raycastOrigin).normalized;
+                Vector3 directionToPlayer = (target.position - raycastOrigin).normalized;
                 RaycastHit hit;
                 int layerMask = LayerMask.GetMask("Default", "Player"); 
 
@@ -147,7 +147,7 @@ public class EnemyAi : NetworkBehaviour
             ChasePlayer();
         }
 
-        if (player.CompareTag("Player"))
+        if (target.CompareTag("Player"))
         {
             if (playerStats != null && playerStats.isDead.Value)
             {
@@ -155,7 +155,7 @@ public class EnemyAi : NetworkBehaviour
             }
         }
 
-        if (!player.gameObject.activeInHierarchy)
+        if (!target.gameObject.activeInHierarchy)
         {
             ChasePlayer();
         }
@@ -182,22 +182,22 @@ public class EnemyAi : NetworkBehaviour
                     PlayerStats targetPlayerStats = selectedTarget.GetComponentInChildren<PlayerStats>();
                     if (targetPlayerStats != null && !targetPlayerStats.isDead.Value)
                     {
-                        player = selectedTarget;
+                        target = selectedTarget;
                         playerStats = targetPlayerStats;
                         targetFound = true;
                     }
                 }
                 else if (targetType == "PermanentPart")
                 {
-                    player = selectedTarget;
+                    target = selectedTarget;
                     targetFound = true;
                 }
             }
         }
         
-        if (player == null)
+        if (target == null)
         {
-            player = targets[Random.Range(0, targets.Count)];
+            target = targets[Random.Range(0, targets.Count)];
         }
     }
     
@@ -232,31 +232,31 @@ public class EnemyAi : NetworkBehaviour
                 PlayerStats otherPlayerStats = targets[i].GetComponentInChildren<PlayerStats>();
                 if (otherPlayerStats != null && !otherPlayerStats.isDead.Value)
                 {
-                    player = targets[i];
+                    target = targets[i];
                     playerStats = otherPlayerStats;
                     break;
                 }
             }
         }
 
-        if (!player.gameObject.activeInHierarchy)
+        if (!target.gameObject.activeInHierarchy)
         {
             playerInAttackRange = false;
 
             isActive = false;
             while (!isActive)
             {
-                player = targets[Random.Range(0, targets.Count)];
-                if (player.gameObject.activeInHierarchy)
+                target = targets[Random.Range(0, targets.Count)];
+                if (target.gameObject.activeInHierarchy)
                 {
                     isActive = true;
                 }
             }
         }
 
-        if (player != null)
+        if (target != null)
         {
-            agent.SetDestination(player.position);
+            agent.SetDestination(target.position);
             isActive = false;
         }
     }
@@ -264,7 +264,7 @@ public class EnemyAi : NetworkBehaviour
     private void AttackPlayer()
     {
         agent.SetDestination(transform.position);
-        transform.LookAt(player);
+        transform.LookAt(target);
         transform.LookAt(firePoint.transform);
 
         if (!alreadyAttacked)
@@ -289,7 +289,7 @@ public class EnemyAi : NetworkBehaviour
 
             Rigidbody rb = enemyBulletGo.GetComponent<Rigidbody>();
             enemyBulletGo.transform.position = firePoint.transform.position;
-            Vector3 throwDirection = (player.position - firePoint.transform.position).normalized;
+            Vector3 throwDirection = (target.position - firePoint.transform.position).normalized;
             rb.AddForce(throwDirection * 500f, ForceMode.Impulse);
 
             RaycastHit hit;
@@ -337,7 +337,7 @@ public class EnemyAi : NetworkBehaviour
         {
             // Dodge the next attack
             int dodgeDirection = (Random.Range(0, 2) * 2 - 1) * 2; // Generates either -2 or 2
-            Vector3 towardsPlayer = (player.position - transform.position).normalized;
+            Vector3 towardsPlayer = (target.position - transform.position).normalized;
             Vector3 dodgeVector = Vector3.Cross(towardsPlayer, Vector3.up) * dodgeDirection;
             dodgePosition = transform.position + dodgeVector;
             isDodging = true;

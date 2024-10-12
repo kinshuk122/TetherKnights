@@ -502,7 +502,7 @@ MonoBehaviour:
     m_InternalValue: 90
   isDestroyed:
     m_InternalValue: 0
-  maxHealth: 200900
+  maxHealth: 900
   repairAmount:
     m_InternalValue: 30
   isRepairing:
