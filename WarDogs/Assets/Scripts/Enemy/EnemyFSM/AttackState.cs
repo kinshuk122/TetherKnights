@@ -80,7 +80,6 @@ public class AttackState : BaseState
             Vector3 throwDirection = (target.position - firePoint.transform.position).normalized;
             // rb.AddForce(throwDirection * 500f, ForceMode.Impulse);
 
-            Debug.Log("Sight Range: " +sightRange);
             
             RaycastHit hit;
             if (Physics.Raycast(firePoint.transform.position, throwDirection, out hit, sightRange))

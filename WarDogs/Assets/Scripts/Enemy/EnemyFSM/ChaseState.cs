@@ -43,7 +43,6 @@ public class ChaseState : BaseState
     {
         base.Update();
         
-        Debug.Log("ATtack Range: " + attackRange);
         Vector3 raycastOrigin = firePoint != null ? firePoint.transform.position : agent.transform.position + Vector3.up;
 
         Collider[] collidersInAttackRange = Physics.OverlapSphere(agent.transform.position, attackRange);
