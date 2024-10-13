@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44de6f69cad4fe449b34473bbd79331c, type: 3}
   m_Name: M4
   m_EditorClassIdentifier: 
-  damage: 20
-  fireRate: 0.3
+  damage: 10
+  fireRate: 0.15
   spread: 0
   range: 100
-  reloadTime: 2
+  reloadTime: 3
   timeBetweenShots: 0.1
-  magazineSize: 50
+  magazineSize: 40
   bulletsPerTap: 1
   allowButtonHold: 1
   gunPrefab: {fileID: 0}
