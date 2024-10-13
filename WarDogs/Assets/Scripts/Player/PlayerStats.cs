@@ -35,6 +35,7 @@ public class PlayerStats : NetworkBehaviour
     {
         GameManager.instance.currentAlivePlayers++;
         playerInput = GetComponentInParent<PlayerInput>();
+        
     }
 
     private void Update()
@@ -64,10 +65,10 @@ public class PlayerStats : NetworkBehaviour
             
             if (isDead.Value)
             {
-                Debug.Log("Player is dead.");
                 RespawnCountdown(); 
             }
         }
+        
         
         // Pickup and place logic
         if (hit.collider != null)
@@ -75,13 +76,12 @@ public class PlayerStats : NetworkBehaviour
             hit.collider.GetComponentInParent<Highlight>()?.ToggleHighlight(false);
         }
         
-        Debug.DrawRay(playerCameraTransform.position, playerCameraTransform.forward * hitRange, Color.green);
         if(Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out hit, hitRange, pickableLayerMask))
         {
             hit.collider.GetComponentInParent<Highlight>()?.ToggleHighlight(true);
             if (playerInput.actions["Pickup"].WasPressedThisFrame() && !isHolding)
             {
-                Pickup();
+                // Pickup();
             }
         }
         
@@ -89,8 +89,13 @@ public class PlayerStats : NetworkBehaviour
         {
             if (isHolding)
             {
-                Drop();
+                // Drop();
             }
+        }
+        
+        if(inHandItem != null && isHolding)
+        {
+            inHandItem.transform.position = pickUpParent.localPosition;
         }
     }
 
@@ -103,9 +108,20 @@ public class PlayerStats : NetworkBehaviour
                 Rigidbody rb = hit.collider.GetComponentInParent<Rigidbody>();
                 Debug.Log(hit.collider.name);
                 inHandItem = hit.collider.transform.parent.gameObject;
-                inHandItem.transform.SetParent(pickUpParent.transform,true);
-                inHandItem.transform.localPosition = Vector3.zero;
-                inHandItem.transform.localRotation = Quaternion.identity;
+                
+                NetworkObject pickUpParentNetworkObject = pickUpParent.GetComponent<NetworkObject>();
+                NetworkObject inHandItemNetworkObject = inHandItem.GetComponent<NetworkObject>();
+                if (pickUpParentNetworkObject != null && inHandItemNetworkObject != null)
+                {
+                    inHandItemNetworkObject.TrySetParent(pickUpParentNetworkObject);
+                }
+                else
+                {
+                    inHandItem.transform.SetParent(pickUpParent.transform, true);
+                }
+                
+                inHandItem.transform.position = pickUpParent.position;
+                inHandItem.transform.rotation = pickUpParent.rotation;
                 isHolding = true;
                 if(rb != null)
                 {

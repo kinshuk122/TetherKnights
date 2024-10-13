@@ -228,7 +228,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   hitRange: 3
-  playerCameraTransform: {fileID: 467394095410685043}
+  playerCameraTransform: {fileID: 0}
   pickUpParent: {fileID: 1200764302869971619}
   inHandItem: {fileID: 0}
   isHolding: 0
@@ -598,7 +598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 169829396
+  GlobalObjectIdHash: 1283850302
   InScenePlacedSourceGlobalObjectIdHash: 2027524606
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1

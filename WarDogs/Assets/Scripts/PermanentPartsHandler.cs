@@ -8,7 +8,8 @@ using UnityEngine.InputSystem;
 public class PermanentPartsHandler : NetworkBehaviour
 {
     [Header("PermanentPart settings")]
-    public NetworkVariable<float> health = new NetworkVariable<float>(900f);
+    private NetworkVariable<float> health = new NetworkVariable<float>(900f); //This and at awake you change the value for health for now. (health.Value = 900f;)
+
     public NetworkVariable<bool> isDestroyed = new NetworkVariable<bool>();
     public float maxHealth;
     
@@ -31,7 +32,7 @@ public class PermanentPartsHandler : NetworkBehaviour
     {
         healthText = healthTextCanvas.GetComponentsInChildren<TextMeshProUGUI>();
         healthTextCanvas.SetActive(false);
-        health.Value = 900f;
+        health.Value = 900f; //This is the other value you need to edit
         maxHealth = health.Value;
         audioSource = GetComponent<AudioSource>();
     }
