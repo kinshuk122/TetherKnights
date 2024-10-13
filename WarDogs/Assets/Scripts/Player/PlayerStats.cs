@@ -76,14 +76,14 @@ public class PlayerStats : NetworkBehaviour
             hit.collider.GetComponentInParent<Highlight>()?.ToggleHighlight(false);
         }
         
-        // if(Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out hit, hitRange, pickableLayerMask))
-        // {
-        //     hit.collider.GetComponentInParent<Highlight>()?.ToggleHighlight(true);
-        //     if (playerInput.actions["Pickup"].WasPressedThisFrame() && !isHolding)
-        //     {
-        //         // Pickup();
-        //     }
-        // }
+        if(Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out hit, hitRange, pickableLayerMask))
+        {
+            hit.collider.GetComponentInParent<Highlight>()?.ToggleHighlight(true);
+            if (playerInput.actions["Pickup"].WasPressedThisFrame() && !isHolding)
+            {
+                // Pickup();
+            }
+        }
         
         if (playerInput.actions["Pickup"].WasReleasedThisFrame())
         {

@@ -66,25 +66,28 @@ public class EnemyStateMachine : NetworkBehaviour
         {
             enemyType = enemyAiScriptable[networkEnemyType.Value];
         }
+
+        if (IsServer)
+        {
+            health.Value = enemyType.health;
+            damage.Value = enemyType.damage;
+            sightRange.Value = enemyType.sightRange;
+            attackRange.Value = enemyType.attackRange;
+            speed.Value = enemyType.speed;
+            increaseSpeedOnGettingAttacked.Value = enemyType.increaseSpeedOnGettingAttacked;
+        }
         
-        health.Value = enemyType.health;
-        damage.Value = enemyType.damage;
-        sightRange.Value = enemyType.sightRange;
-        attackRange.Value = enemyType.attackRange;
-        speed.Value = enemyType.speed;
-        increaseSpeedOnGettingAttacked.Value = enemyType.increaseSpeedOnGettingAttacked;
-        
-        // if (!enemyType.isGroundEnemy)
-        // {
-        //     if (agent.agentTypeID != -1372625422)
-        //     {
-        //         agent.agentTypeID = -1372625422;
-        //     }
-        //     if (agent.baseOffset != baseOffset)
-        //     {
-        //         agent.baseOffset = baseOffset;
-        //     }
-        // }
+        if (!enemyType.isGroundEnemy)
+        {
+            if (agent.agentTypeID != -1372625422)
+            {
+                agent.agentTypeID = -1372625422;
+            }
+            if (agent.baseOffset != baseOffset)
+            {
+                agent.baseOffset = baseOffset;
+            }
+        }
         
         EnemyTypeCondition();
     }
