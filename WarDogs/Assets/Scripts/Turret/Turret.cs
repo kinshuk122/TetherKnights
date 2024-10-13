@@ -1,78 +1,74 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using System.Linq;
 
-public class Turret : MonoBehaviour
+namespace Turrets
 {
-    public Transform target;
-    public Transform partToRotate;
-    public float range = 15f;
-    public float turnSpeed = 10f;
-    public float fireRate = 1f;
-    private float fireCountdown = 0f;
-    public GameObject bulletPrefab;
-    public Transform firePoint;
+   public class Turret : MonoBehaviour
+   {
+      [Header("Turret Stats")] 
+      public float health;
+      public float fireRate;
+      public float range;
+      public float damage;
+      
+      [Header("Turret Setup")]
+      public Transform target;
+      public Transform head;
+      public LayerMask enemyLayer;
 
-    void Start()
-    {
-        InvokeRepeating("UpdateTarget", 0f, 0.5f);
-    }
+      private float lastShotTime;
 
-    void UpdateTarget()
-    {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        float shortestDistance = Mathf.Infinity;
-        GameObject nearestEnemy = null;
-
-        foreach (GameObject enemy in enemies)
-        {
-            float distanceToEnemy = Vector3.Distance(transform.position, enemy.transform.position);
-            if (distanceToEnemy < shortestDistance)
+      private void Update()
+      {
+         FindTarget();
+         
+         if(target == null) return;
+         
+         float distanceToTarget = Vector3.Distance(target.position, transform.position);
+         if(distanceToTarget <= range)
+         {
+            head.LookAt(target);
+            if (Time.time >= lastShotTime + fireRate)
             {
-                shortestDistance = distanceToEnemy;
-                nearestEnemy = enemy;
+               Shoot();
+               lastShotTime = Time.time;
             }
-        }
-
-        if (nearestEnemy != null && shortestDistance <= range)
-        {
-            target = nearestEnemy.transform;
-        }
-        else
-        {
+         }
+         
+         if(health <= 0)
+         {
+            Destroy(gameObject);
+         }
+      }
+      
+      private void FindTarget()
+      {
+         Collider[] enemiesInRange = Physics.OverlapSphere(transform.position, range, enemyLayer);
+         if (enemiesInRange.Length > 0)
+         {
+            Collider closestEnemy = enemiesInRange.OrderBy(e => Vector3.Distance(transform.position, e.transform.position)).First();
+            
+            target = closestEnemy.transform;
+         }
+         else
+         {
             target = null;
-        }
-    }
+         }
+      }
 
-    void Update()
-    {
-        if (target == null)
-        {
-            return;
-        }
+      private void Shoot()
+      {
+         if (target == null) return;
 
-        Vector3 dir = target.position - transform.position;
-        Quaternion lookRotation = Quaternion.LookRotation(dir);
-        Vector3 rotation = Quaternion.Lerp(partToRotate.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
-        partToRotate.rotation = Quaternion.Euler(0f, rotation.y, 0f);
-
-        if (fireCountdown <= 0f)
-        {
-            Shoot();
-            fireCountdown = 1f / fireRate;
-        }
-
-        fireCountdown -= Time.deltaTime;
-    }
-
-    void Shoot()
-    {
-        
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, range);
-    }
+         RaycastHit hit;
+         if (Physics.Raycast(head.position, head.forward, out hit, range, enemyLayer))
+         {
+            if (hit.transform.CompareTag("Enemy"))
+            {
+               hit.collider.GetComponent<EnemyStateMachine>().TakeDamageServerRpc(damage);
+            }
+         }
+      }
+   }
 }

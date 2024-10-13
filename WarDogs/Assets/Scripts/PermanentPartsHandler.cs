@@ -31,6 +31,7 @@ public class PermanentPartsHandler : NetworkBehaviour
     {
         healthText = healthTextCanvas.GetComponentsInChildren<TextMeshProUGUI>();
         healthTextCanvas.SetActive(false);
+        health.Value = 900f;
         maxHealth = health.Value;
         audioSource = GetComponent<AudioSource>();
     }
