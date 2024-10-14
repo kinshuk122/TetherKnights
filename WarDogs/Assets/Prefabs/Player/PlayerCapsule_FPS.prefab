@@ -229,7 +229,7 @@ MonoBehaviour:
     m_Bits: 1024
   hitRange: 3
   playerCameraTransform: {fileID: 467394095410685043}
-  pickUpParent: {fileID: 1200764302869971619}
+  pickUpParent: {fileID: 8997996947095583982}
   inHandItem: {fileID: 0}
   isHolding: 0
 --- !u!1 &7023753121861677455

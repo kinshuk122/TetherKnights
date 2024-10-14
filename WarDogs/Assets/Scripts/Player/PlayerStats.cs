@@ -26,8 +26,8 @@ public class PlayerStats : NetworkBehaviour
     [SerializeField] [Min(1)] private float hitRange;
     [SerializeField] private Transform playerCameraTransform;
     [SerializeField] private Transform pickUpParent;
-    [SerializeField] private GameObject inHandItem;
-    public bool isHolding;
+    public NetworkVariable<NetworkObjectReference> inHandItem = new NetworkVariable<NetworkObjectReference>();
+    public NetworkVariable<bool> isHolding = new NetworkVariable<bool>(); 
     PlayerInput playerInput;
     private RaycastHit hit;
     
@@ -79,24 +79,20 @@ public class PlayerStats : NetworkBehaviour
         if(Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out hit, hitRange, pickableLayerMask))
         {
             hit.collider.GetComponentInParent<Highlight>()?.ToggleHighlight(true);
-            if (playerInput.actions["Pickup"].WasPressedThisFrame() && !isHolding)
+            if (playerInput.actions["Pickup"].WasPressedThisFrame() && !isHolding.Value)
             {
-                // Pickup();
+                Pickup();
             }
         }
         
         if (playerInput.actions["Pickup"].WasReleasedThisFrame())
         {
-            if (isHolding)
+            if (isHolding.Value)
             {
-                // Drop();
+                Drop();
             }
         }
         
-        if(inHandItem != null && isHolding)
-        {
-            inHandItem.transform.position = pickUpParent.localPosition;
-        }
     }
 
     private void Pickup()
@@ -105,54 +101,47 @@ public class PlayerStats : NetworkBehaviour
         {
             if (((1 << hit.collider.gameObject.layer) & pickableLayerMask) != 0)
             {
-                Rigidbody rb = hit.collider.GetComponentInParent<Rigidbody>();
-                Debug.Log(hit.collider.name);
-                inHandItem = hit.collider.transform.parent.gameObject;
-                
-                NetworkObject pickUpParentNetworkObject = pickUpParent.GetComponent<NetworkObject>();
-                NetworkObject inHandItemNetworkObject = inHandItem.GetComponent<NetworkObject>();
-                if (pickUpParentNetworkObject != null && inHandItemNetworkObject != null)
+                NetworkObject networkObject = hit.collider.GetComponentInParent<NetworkObject>();
+                if (networkObject != null && networkObject.IsSpawned)
                 {
-                    inHandItemNetworkObject.TrySetParent(pickUpParentNetworkObject);
+                    if (IsServer || networkObject.IsOwner)
+                    {
+                        ExecutePickup(networkObject);
+                    }
+                    else
+                    {
+                        RequestPickupServerRpc(networkObject.NetworkObjectId);
+                    }
                 }
-                else
-                {
-                    inHandItem.transform.SetParent(pickUpParent.transform, true);
-                }
-                
-                inHandItem.transform.position = pickUpParent.position;
-                inHandItem.transform.rotation = pickUpParent.rotation;
-                isHolding = true;
-                if(rb != null)
-                {
-                    rb.isKinematic = true;
-                    Debug.Log("Picked up " + inHandItem.name);
-                }
-                return;
             }
         }
     }
 
     private void Drop()
     {
-        Vector3 dropPosition = playerCameraTransform.position + playerCameraTransform.forward * 2.0f;
-        RaycastHit floorHit;
-        if (Physics.Raycast(dropPosition, Vector3.down, out floorHit, Mathf.Infinity))
+        if (inHandItem.Value.TryGet(out NetworkObject networkObject))
         {
-            dropPosition.y = floorHit.point.y;
-        }
+            Vector3 dropPosition = playerCameraTransform.position + playerCameraTransform.forward * 2.0f;
+            RaycastHit floorHit;
+            if (Physics.Raycast(dropPosition, Vector3.down, out floorHit, Mathf.Infinity))
+            {
+                dropPosition.y = floorHit.point.y;
+            }
 
-        Rigidbody rb = inHandItem.gameObject.GetComponentInParent<Rigidbody>();
-        
-        if(rb != null)
-        {
-            rb.isKinematic = false;
+            if (networkObject != null)
+            {
+                if (IsServer)
+                {
+                    Debug.Log("ExecuteDrop");
+                    ExecuteDrop(networkObject, dropPosition);
+                }
+                else
+                {
+                    Debug.Log("RequestDropServerRpc");
+                    RequestDropServerRpc(networkObject.NetworkObjectId, dropPosition);
+                }
+            }
         }
-        
-        inHandItem.transform.position = dropPosition;
-        inHandItem.transform.SetParent(null);
-        inHandItem = null;
-        isHolding = false;
     }
     
     [ServerRpc(RequireOwnership = false)]
@@ -202,4 +191,59 @@ public class PlayerStats : NetworkBehaviour
         allowToHeal.Value = true;
     }
     
+    
+    //Pickup logic functions
+    private void ExecutePickup(NetworkObject networkObject)
+    {
+        Rigidbody rb = networkObject.GetComponentInParent<Rigidbody>();
+        inHandItem.Value = networkObject.gameObject;
+
+        NetworkObject pickUpParentNetworkObject = pickUpParent.GetComponent<NetworkObject>();
+        if (pickUpParentNetworkObject != null)
+        {
+            networkObject.TrySetParent(pickUpParentNetworkObject);
+        }
+        else
+        {
+            networkObject.transform.SetParent(pickUpParent.transform, true);
+        }
+
+        networkObject.transform.position = pickUpParent.position + new Vector3(0f, 0.20f, 1f);
+        networkObject.transform.rotation = pickUpParent.rotation;
+        isHolding.Value = true;
+        Debug.Log(isHolding);
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestPickupServerRpc(ulong networkObjectId, ServerRpcParams rpcParams = default)
+    {
+        NetworkObject networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
+        ExecutePickup(networkObject);
+    }
+    
+    private void ExecuteDrop(NetworkObject networkObject, Vector3 dropPosition)
+    {
+        Rigidbody rb = networkObject.GetComponentInParent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+        }
+
+        networkObject.transform.position = dropPosition;
+        networkObject.transform.SetParent(null);
+        inHandItem.Value = new NetworkObjectReference(networkObject);
+        isHolding.Value = false;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestDropServerRpc(ulong networkObjectId, Vector3 dropPosition, ServerRpcParams rpcParams = default)
+    {
+        NetworkObject networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
+        ExecuteDrop(networkObject, dropPosition);
+    }
 }
