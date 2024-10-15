@@ -169,7 +169,6 @@ public class WaveSpawner : NetworkBehaviour
                     }
                     
                     EnemyStateMachine enemyStateMachine = enemyInstance.GetComponent<EnemyStateMachine>();
-                    
                     enemyStateMachine.networkEnemyType.Value = Array.IndexOf(enemyAiScriptable, enemyType);
                     
                     if (permanentPartTargetCount > 0)

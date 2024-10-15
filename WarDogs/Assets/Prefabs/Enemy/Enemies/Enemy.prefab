@@ -348,7 +348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 312201890
+  GlobalObjectIdHash: 3180745495
   InScenePlacedSourceGlobalObjectIdHash: 2848631713
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -400,7 +400,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ff032614478cc24ca8e99f405c5d0ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyType: {fileID: 11400000, guid: 1e47d077b78b1b3428a29392151943d9, type: 2}
+  stateName: 
+  playerInLineOfSight: 0
+  enemyType: {fileID: 0}
   agent: {fileID: 0}
   baseOffset: 2
   target: {fileID: 0}

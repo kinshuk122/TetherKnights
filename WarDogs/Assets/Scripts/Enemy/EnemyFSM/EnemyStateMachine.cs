@@ -39,6 +39,7 @@ public class EnemyStateMachine : NetworkBehaviour
     public NetworkVariable<float> increaseSpeedOnGettingAttacked = new NetworkVariable<float>();
     
     public NetworkVariable<int> networkEnemyType = new NetworkVariable<int>();
+    public bool propertieschecked = false;
     
     [Header("Dodging")]
     public float dodgeSpeed;
@@ -51,6 +52,10 @@ public class EnemyStateMachine : NetworkBehaviour
 
     private void Awake()
     {
+        // enemyType = enemyAiScriptable[networkEnemyType.Value];
+        // Debug.Log(enemyType.name);
+
+        
         InitializeStates();
         
         SearchTarget();
@@ -61,39 +66,51 @@ public class EnemyStateMachine : NetworkBehaviour
     private void Start()
     {
         ChangeState(chaseState);
-        
-        if (networkEnemyType.Value != Array.IndexOf(enemyAiScriptable, enemyType))
-        {
-            enemyType = enemyAiScriptable[networkEnemyType.Value];
-        }
 
-        if (IsServer)
-        {
-            health.Value = enemyType.health;
-            damage.Value = enemyType.damage;
-            sightRange.Value = enemyType.sightRange;
-            attackRange.Value = enemyType.attackRange;
-            speed.Value = enemyType.speed;
-            increaseSpeedOnGettingAttacked.Value = enemyType.increaseSpeedOnGettingAttacked;
-        }
+
         
-        if (!enemyType.isGroundEnemy)
-        {
-            if (agent.agentTypeID != -1372625422)
-            {
-                agent.agentTypeID = -1372625422;
-            }
-            if (agent.baseOffset != baseOffset)
-            {
-                agent.baseOffset = baseOffset;
-            }
-        }
-        
-        EnemyTypeCondition();
     }
     
     private void Update()
     {
+        
+        if (networkEnemyType.Value != Array.IndexOf(enemyAiScriptable, enemyType))
+        {
+            enemyType = enemyAiScriptable[networkEnemyType.Value];
+            Debug.Log(enemyType.name);
+        }
+
+        if (!propertieschecked)
+        {
+            if (IsServer)
+            {
+                health.Value = enemyType.health;
+                damage.Value = enemyType.damage;
+                sightRange.Value = enemyType.sightRange;
+                attackRange.Value = enemyType.attackRange;
+                speed.Value = enemyType.speed;
+                increaseSpeedOnGettingAttacked.Value = enemyType.increaseSpeedOnGettingAttacked;
+                enemyType = enemyAiScriptable[networkEnemyType.Value];
+            }
+        
+            if (!enemyType.isGroundEnemy)
+            {
+                if (agent.agentTypeID != -1372625422)
+                {
+                    agent.agentTypeID = -1372625422;
+                }
+                if (agent.baseOffset != baseOffset)
+                {
+                    agent.baseOffset = baseOffset;
+                }
+            }
+        
+            
+            propertieschecked = true;
+        }
+        
+        EnemyTypeCondition();
+        
         _currentState?.Update();
         
         dodgeTimer += Time.deltaTime;
