@@ -4,11 +4,12 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PermanentPartsHandler : NetworkBehaviour
 {
     [Header("PermanentPart settings")]
-    private NetworkVariable<float> health = new NetworkVariable<float>(900f); //This and at awake you change the value for health for now. (health.Value = 900f;)
+    private NetworkVariable<float> health = new NetworkVariable<float>(900f); //Change the value HERE only now
 
     public NetworkVariable<bool> isDestroyed = new NetworkVariable<bool>();
     public float maxHealth;
@@ -32,7 +33,6 @@ public class PermanentPartsHandler : NetworkBehaviour
     {
         healthText = healthTextCanvas.GetComponentsInChildren<TextMeshProUGUI>();
         healthTextCanvas.SetActive(false);
-        health.Value = 900f; //This is the other value you need to edit
         maxHealth = health.Value;
         audioSource = GetComponent<AudioSource>();
     }
@@ -41,11 +41,10 @@ public class PermanentPartsHandler : NetworkBehaviour
     {
         if (IsServer)
         {
-            if (health.Value <= 0 && !isDestroyed.Value)
+            if (health.Value <= 0)
             {
                 isDestroyed.Value = true;
-                AudioSource.PlayClipAtPoint(destroyAudio, transform.position);
-                this.gameObject.SetActive(false);
+                // AudioSource.PlayClipAtPoint(destroyAudio, transform.position);
             }
 
             if (isRepairing.Value)
@@ -57,19 +56,6 @@ public class PermanentPartsHandler : NetworkBehaviour
         if (isDestroyed.Value)
         {
             this.gameObject.SetActive(false);
-        }
-        else if (!isDestroyed.Value && !this.gameObject.activeSelf)
-        {
-            this.gameObject.SetActive(true);
-        }
-        
-        if (isDestroyed.Value && this.gameObject.activeSelf)
-        {
-            this.gameObject.SetActive(false);
-        }
-        else if (!isDestroyed.Value && !this.gameObject.activeSelf)
-        {
-            this.gameObject.SetActive(true);
         }
     }
 
