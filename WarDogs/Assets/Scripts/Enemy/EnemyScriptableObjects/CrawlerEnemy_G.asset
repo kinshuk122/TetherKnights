@@ -15,13 +15,14 @@ MonoBehaviour:
   health: 40
   damage: 9
   speed: 8
-  increaseSpeedOnGettingAttacked: 2
+  fireRate: 3
   isGroundEnemy: 1
   isBossEnemy: 0
-  timeBetweenAttacks: 3
+  isSuicideBomber: 0
+  sightRange: 50
+  attackRange: 10
   throwSpeed: 500
   enemyBullet: {fileID: 4074496659085174914, guid: 3bb0ef203717a484ea8bcba2960d97b4,
     type: 3}
-  sightRange: 50
-  attackRange: 10
-  increaseSightOnGettingAttacked: 5
+  explosionRadius: 0
+  explosionDamage: 0

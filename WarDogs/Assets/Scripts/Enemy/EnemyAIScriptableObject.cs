@@ -8,22 +8,23 @@ public class EnemyAIScriptableObject : ScriptableObject
     [Header("About Enemy")]
     public float health;
     public float damage;
-    // public GameObject enemyPrefab;
     public float speed;
-    public float increaseSpeedOnGettingAttacked;
-    
+    public float fireRate;
+
     [Header("EnemyTypeBool")]
     public bool isGroundEnemy;
     public bool isBossEnemy;
+    public bool isSuicideBomber;
     
-    [Header("Attack")]
-    public float timeBetweenAttacks;
-    public float throwSpeed;
-    public GameObject enemyBullet;
-
     [Header("About States")]
     public float sightRange;
     public float attackRange;
-    public float increaseSightOnGettingAttacked;
-
+    
+    [Header("GameObject Bullet")]
+    public float throwSpeed;
+    public GameObject enemyBullet;
+    
+    [Header("About Bomber Enemy")]
+    public float explosionRadius;
+    public float explosionDamage;
 }

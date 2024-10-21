@@ -35,9 +35,16 @@ public class AttackState : BaseState
     public override void Update()
     {
         base.Update();
-        
-        AttackPlayer();
 
+        if (model.enemyType.isSuicideBomber)
+        {
+            Explode();
+        }
+        else
+        {
+            AttackPlayer();
+        }
+        
         float distanceToTarget = Vector3.Distance(agent.transform.position, target.position);
         if (target == null || distanceToTarget > attackRange)
         {
@@ -106,10 +113,49 @@ public class AttackState : BaseState
             model.StartCoroutine(ResetAttack());
         }
     }
-    
+
+    private void Explode()
+    {
+        Collider[] colliders = Physics.OverlapSphere(agent.transform.position, model.enemyType.explosionRadius);
+        foreach (Collider nearbyObject in colliders)
+        {
+            Rigidbody rb = agent.gameObject.AddComponent<Rigidbody>();
+
+            if (rb != null)
+            {
+                rb.AddExplosionForce(model.enemyType.explosionDamage, agent.transform.position, model.enemyType.explosionRadius);
+            }
+
+            float distance = Vector3.Distance(agent.transform.position, nearbyObject.transform.position);
+            float damage = Mathf.Lerp(model.enemyType.explosionDamage, 0, distance / model.enemyType.explosionRadius);
+
+            PlayerStats playerStats = nearbyObject.GetComponent<PlayerStats>();
+            if (playerStats != null)
+            {
+                playerStats.TakeDamageServerRpc(damage);
+                Debug.Log($"Damaged Player: {nearbyObject.name} for {damage} damage.");
+            }
+
+            PermanentPartsHandler part = nearbyObject.GetComponent<PermanentPartsHandler>();
+            if (part != null)
+            {
+                part.RequestTakeDamageServerRpc(damage);
+                Debug.Log($"Damaged Permanent Part: {nearbyObject.name} for {damage} damage.");
+            }
+
+            WallHealth wallHealth = nearbyObject.GetComponentInChildren<WallHealth>();
+            if (wallHealth != null)
+            {
+                wallHealth.health.Value -= damage;
+                Debug.Log($"Damaged Wall: {nearbyObject.name} for {damage} damage.");
+            }
+        }
+        model.ChangeState(model.deathState);
+    }
+
     private IEnumerator ResetAttack()
     {
-        yield return new WaitForSeconds(model.enemyType.timeBetweenAttacks);
+        yield return new WaitForSeconds(model.enemyType.fireRate);
         alreadyAttacked = false;
     }
 }

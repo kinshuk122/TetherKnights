@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - EnemyBullet
   - PermanentPart
+  - SpawnPoint
   layers:
   - Default
   - TransparentFX

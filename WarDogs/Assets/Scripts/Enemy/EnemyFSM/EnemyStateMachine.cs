@@ -23,6 +23,7 @@ public class EnemyStateMachine : NetworkBehaviour
     public List<Transform> _targets = new List<Transform>();
     public GameObject firePoint;
     public EnemyAIScriptableObject[] enemyAiScriptable;
+    public GameObject[] bomberTargets;
     
     [Header("States")]
     public ChaseState chaseState;
@@ -49,13 +50,9 @@ public class EnemyStateMachine : NetworkBehaviour
     [Header("Testing")] //Remove after model impliementation
     public Material groundEnemyMaterial;
     public Material flyingEnemyMaterial;
-
+    
     private void Awake()
     {
-        // enemyType = enemyAiScriptable[networkEnemyType.Value];
-        // Debug.Log(enemyType.name);
-
-        
         InitializeStates();
         
         SearchTarget();
@@ -66,9 +63,6 @@ public class EnemyStateMachine : NetworkBehaviour
     private void Start()
     {
         ChangeState(chaseState);
-
-
-        
     }
     
     private void Update()
@@ -78,6 +72,12 @@ public class EnemyStateMachine : NetworkBehaviour
         {
             enemyType = enemyAiScriptable[networkEnemyType.Value];
             Debug.Log(enemyType.name);
+            
+            if (enemyType.isSuicideBomber) //Search target for suicide bombers
+            {
+                bomberTargets = GameObject.FindGameObjectsWithTag("SpawnPoint");
+                target = bomberTargets[Random.Range(0, bomberTargets.Length)].transform;
+            }
         }
 
         if (!propertieschecked)
@@ -89,7 +89,7 @@ public class EnemyStateMachine : NetworkBehaviour
                 sightRange.Value = enemyType.sightRange;
                 attackRange.Value = enemyType.attackRange;
                 speed.Value = enemyType.speed;
-                increaseSpeedOnGettingAttacked.Value = enemyType.increaseSpeedOnGettingAttacked;
+                // increaseSpeedOnGettingAttacked.Value = enemyType.increaseSpeedOnGettingAttacked;
                 enemyType = enemyAiScriptable[networkEnemyType.Value];
             }
         
@@ -151,7 +151,6 @@ public class EnemyStateMachine : NetworkBehaviour
     [ClientRpc]
     private void DestroyEnemyClientRpc()
     {
-        Debug.Log("Dead");
         ChangeState(deathState);
     }
     
@@ -188,8 +187,9 @@ public class EnemyStateMachine : NetworkBehaviour
         }
     }
     
-    private void SearchTarget()
+    private void SearchTarget() //Get the reference and ++ the count to better optimize it
     {
+        
         GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject playerObject in playerObjects)
         {

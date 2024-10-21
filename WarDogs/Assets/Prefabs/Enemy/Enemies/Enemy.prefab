@@ -413,6 +413,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5e5e7ad6347f35646af7df934145e64e, type: 2}
   - {fileID: 11400000, guid: 12799ecb41aff074d9273ad6f42c7895, type: 2}
   - {fileID: 11400000, guid: 1e47d077b78b1b3428a29392151943d9, type: 2}
+  - {fileID: 11400000, guid: df89ff146c80f9a47982130e6abc480b, type: 2}
   health:
     m_InternalValue: 0
   damage:
@@ -427,6 +428,7 @@ MonoBehaviour:
     m_InternalValue: 0
   networkEnemyType:
     m_InternalValue: 0
+  propertieschecked: 0
   dodgeSpeed: 5
   dodgeCooldown: 3
   dodgeTimer: 0

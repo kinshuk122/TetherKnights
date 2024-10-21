@@ -316,7 +316,7 @@ public class EnemyAi : NetworkBehaviour
             }
 
             alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), enemyType.timeBetweenAttacks);
+            Invoke(nameof(ResetAttack), enemyType.fireRate);
         }
     }
 
@@ -434,11 +434,11 @@ public class EnemyAi : NetworkBehaviour
             agent.speed = speed.Value;
             return (false, "speed");
         }
-        if (increaseSpeedOnGettingAttacked.Value != enemyType.increaseSightOnGettingAttacked)
-        {
-            increaseSpeedOnGettingAttacked.Value = enemyType.increaseSightOnGettingAttacked;
-            return (false, "increaseSpeedOnGettingAttacked");
-        }
+        // if (increaseSpeedOnGettingAttacked.Value != enemyType.increaseSightOnGettingAttacked)
+        // {
+        //     increaseSpeedOnGettingAttacked.Value = enemyType.increaseSightOnGettingAttacked;
+        //     return (false, "increaseSpeedOnGettingAttacked");
+        // }
         if (agent.speed != speed.Value)
         {
             agent.speed = speed.Value;
