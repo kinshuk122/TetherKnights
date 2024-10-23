@@ -11,20 +11,21 @@ public class EnemyStateMachine : NetworkBehaviour
     public BaseState _currentState;
     public string stateName;
     
-    [Header("State Checking Booleans")]
+    [Header("Booleans")]
     public bool playerInLineOfSight;
-    
+    private bool propertieschecked = false;
+
     [Header("General")]
     public EnemyAIScriptableObject enemyType;
     public NavMeshAgent agent;
-    public float baseOffset; //Change it to 4 once camera works perfectly
+    [SerializeField] private float baseOffset; //Change it to 4 once camera works perfectly
     public Transform target;
     public PlayerStats playerStats;
     public List<Transform> _targets = new List<Transform>();
     public GameObject firePoint;
-    public EnemyAIScriptableObject[] enemyAiScriptable;
-    public GameObject[] bomberTargets;
-    
+    [SerializeField] private EnemyAIScriptableObject[] enemyAiScriptable; //Assault, Crawler, Sniper, SuicideBomber
+    [SerializeField] private GameObject[] bomberTargets;
+
     [Header("States")]
     public ChaseState chaseState;
     public AttackState attackState;
@@ -38,9 +39,8 @@ public class EnemyStateMachine : NetworkBehaviour
     public NetworkVariable<float> attackRange = new NetworkVariable<float>();
     public NetworkVariable<float> speed = new NetworkVariable<float>();
     public NetworkVariable<float> increaseSpeedOnGettingAttacked = new NetworkVariable<float>();
-    
     public NetworkVariable<int> networkEnemyType = new NetworkVariable<int>();
-    public bool propertieschecked = false;
+    
     
     [Header("Dodging")]
     public float dodgeSpeed;
@@ -48,8 +48,8 @@ public class EnemyStateMachine : NetworkBehaviour
     public float dodgeTimer = 0f;
     
     [Header("Testing")] //Remove after model impliementation
-    public Material groundEnemyMaterial;
-    public Material flyingEnemyMaterial;
+    [SerializeField] public Material groundEnemyMaterial;
+    [SerializeField] public Material flyingEnemyMaterial;
     
     private void Awake()
     {
@@ -71,7 +71,6 @@ public class EnemyStateMachine : NetworkBehaviour
         if (networkEnemyType.Value != Array.IndexOf(enemyAiScriptable, enemyType))
         {
             enemyType = enemyAiScriptable[networkEnemyType.Value];
-            Debug.Log(enemyType.name);
             
             if (enemyType.isSuicideBomber) //Search target for suicide bombers
             {

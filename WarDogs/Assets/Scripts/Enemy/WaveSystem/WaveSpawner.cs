@@ -23,6 +23,9 @@ public class WaveSpawner : NetworkBehaviour
     private int breakLength; // in seconds
     public float percentageOfEnemiesToTargetPermanentPart = 0.2f;
     private NetworkVariable<int> selectedEnemyTypeId = new NetworkVariable<int>();
+    [SerializeField] public float timeBetweenWaves;
+    private float waveCountdown;
+    
     
     [Header("NotControlledValues - Change to Private in future")]
     public int maxEnemies;
@@ -40,6 +43,7 @@ public class WaveSpawner : NetworkBehaviour
     public int minEnemies; //Spawn next wave when only this many enemies are left
     public float additionalEnemiesPerWave = 2f;
     public float additionalEnemiesPerBreaches = 2f;    
+    
     [Header("EnemyAI")]
     public EnemyAIScriptableObject[] enemyAiScriptable; //0:Assault, 1:Crawler, 2:Sniper
     private int totalEnemyTypes;
@@ -54,6 +58,7 @@ public class WaveSpawner : NetworkBehaviour
         instance = this;
         audioSource = GetComponent<AudioSource>();
         totalEnemyTypes = enemyAiScriptable.Length;
+        waveCountdown = timeBetweenWaves;
     }
 
     void Update() 
@@ -63,6 +68,8 @@ public class WaveSpawner : NetworkBehaviour
             return;
         }
 
+        waveCountdown -= Time.deltaTime;
+        
         if (GameManager.instance.hasWaveStarted.Value && !hasAudioPlayed)
         {
             audioSource.PlayOneShot(waveStartAudio);
@@ -73,8 +80,10 @@ public class WaveSpawner : NetworkBehaviour
             hasAudioPlayed = false;
         }
         
-        if (enemiesAlive <= minEnemies)
+        if (enemiesAlive <= minEnemies || waveCountdown <= 0f)
         {
+            waveCountdown = timeBetweenWaves;
+            
             if (!waveIncremented)
             {
                 wave++;

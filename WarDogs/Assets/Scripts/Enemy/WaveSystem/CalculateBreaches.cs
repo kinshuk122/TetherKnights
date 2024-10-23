@@ -5,13 +5,9 @@ using UnityEngine;
 
 public class CalculateBreaches : MonoBehaviour
 {
-    [Header("References")]
-    public WallHealth wallHealthScript;
-    
-    public int totalBreaches;
-    public float breachThresholdPercentage = 0.7f;
-    public int increasedBreachHealth;
-    public bool hasAdjustedHealth = false;
+    [SerializeField] private int totalBreaches;
+    [SerializeField] private float breachThresholdPercentage = 0.7f;
+    [SerializeField] private bool hasAdjustedHealth = false;
 
     private void Update()
     {

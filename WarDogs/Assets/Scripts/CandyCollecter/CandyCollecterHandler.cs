@@ -14,8 +14,8 @@ public class CandyCollecterHandler : NetworkBehaviour
     public NetworkVariable<int> playerCandyCount = new NetworkVariable<int>();
     public NetworkVariable<int> machineCandyCount = new NetworkVariable<int>();
     public NetworkVariable<int> candyIncrementAmount = new NetworkVariable<int>();
-    public TextMeshProUGUI candyCountText;
-    public float collectionSpeedInSecs;
+    [SerializeField] public TextMeshProUGUI candyCountText;
+    [SerializeField] private float collectionSpeedInSecs;
     private bool canCandyIncrement = false;
     private float timer = 0.0f;
     

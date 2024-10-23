@@ -140,14 +140,12 @@ public class AttackState : BaseState
             if (part != null)
             {
                 part.RequestTakeDamageServerRpc(damage);
-                Debug.Log($"Damaged Permanent Part: {nearbyObject.name} for {damage} damage.");
             }
 
             WallHealth wallHealth = nearbyObject.GetComponentInChildren<WallHealth>();
             if (wallHealth != null)
             {
                 wallHealth.health.Value -= damage;
-                Debug.Log($"Damaged Wall: {nearbyObject.name} for {damage} damage.");
             }
         }
         model.ChangeState(model.deathState);
