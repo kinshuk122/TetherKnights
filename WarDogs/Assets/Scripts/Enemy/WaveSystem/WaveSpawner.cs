@@ -16,16 +16,11 @@ public class WaveSpawner : NetworkBehaviour
     private List<IDebugObserver> observers = new List<IDebugObserver>();
 
     [Header("WaveSystem")] 
-    public GameObject enemyPrefab;
-    private GameObject spawnPoint;
-    private bool waveIncremented = false;
-    private bool randomiseSpawn;
-    private int breakLength; // in seconds
-    public float percentageOfEnemiesToTargetPermanentPart = 0.2f;
-    private NetworkVariable<int> selectedEnemyTypeId = new NetworkVariable<int>();
-    [SerializeField] public float timeBetweenWaves;
-    private float waveCountdown;
-    
+    [SerializeField] private GameObject enemyPrefab;
+    [SerializeField] private float percentageOfEnemiesToTargetPermanentPart = 0.2f;
+    [SerializeField] private float timeBetweenWaves;
+    [SerializeField] private float waveDifficulty;
+    [SerializeField] private int adjustedEnemyToSpawn;
     
     [Header("NotControlledValues - Change to Private in future")]
     public int maxEnemies;
@@ -33,7 +28,14 @@ public class WaveSpawner : NetworkBehaviour
     public int enemiesToSpawn;
     public int wave = 1;
     public List<GameObject> activeSpawnPoints = new List<GameObject>();
+    private bool waveIncremented = false;
+    private bool randomiseSpawn;
+    private int breakLength; // in seconds
+    private NetworkVariable<int> selectedEnemyTypeId = new NetworkVariable<int>();
+    private GameObject spawnPoint;
+    private float waveCountdown;
 
+    
     [Header("Boss Wave Settings")]
     public EnemyAIScriptableObject bossEnemy; //Change to array if more bosses are introduced
     public int reduceSpawnByDivision = 2; //divide the spawn by this number to reduce the number of enemies spawned
@@ -142,7 +144,11 @@ public class WaveSpawner : NetworkBehaviour
     private void SpawnEnemies(int numberOfEnemies, EnemyAIScriptableObject enemyType)
     {
         // maxEnemies = maxEnemies + additionalMaxEnemies;
-        enemiesToSpawn = Mathf.CeilToInt((minEnemies + (wave * additionalEnemiesPerWave) + (activeSpawnPoints.Count * additionalEnemiesPerBreaches)) - enemiesAlive);        if (enemiesToSpawn >= maxEnemies)
+        
+        adjustedEnemyToSpawn = Mathf.CeilToInt(((wave / 10f) * waveDifficulty) * (activeSpawnPoints.Count * additionalEnemiesPerBreaches));        
+        enemiesToSpawn = Mathf.CeilToInt(adjustedEnemyToSpawn - enemiesAlive);        
+        
+        if (enemiesToSpawn >= maxEnemies)
         {
             enemiesToSpawn = maxEnemies;
         }

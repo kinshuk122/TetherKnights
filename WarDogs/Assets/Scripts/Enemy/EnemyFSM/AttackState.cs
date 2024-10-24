@@ -133,7 +133,6 @@ public class AttackState : BaseState
             if (playerStats != null)
             {
                 playerStats.TakeDamageServerRpc(damage);
-                Debug.Log($"Damaged Player: {nearbyObject.name} for {damage} damage.");
             }
 
             PermanentPartsHandler part = nearbyObject.GetComponent<PermanentPartsHandler>();
@@ -143,9 +142,10 @@ public class AttackState : BaseState
             }
 
             WallHealth wallHealth = nearbyObject.GetComponentInChildren<WallHealth>();
+            
             if (wallHealth != null)
             {
-                wallHealth.health.Value -= damage;
+                wallHealth.health.Value -= damage; //Add client RPC
             }
         }
         model.ChangeState(model.deathState);

@@ -58,16 +58,32 @@ public class EnemyStateMachine : NetworkBehaviour
         SearchTarget();
         
         agent = GetComponent<NavMeshAgent>();
+        
+        if (!agent.enabled)
+        {
+            Debug.LogWarning("NavMeshAgent was disabled. Enabling now.");
+            agent.enabled = true;
+        }
+        
     }
 
     private void Start()
     {
+        // Check if agent is on the NavMesh
+        if (!agent.isOnNavMesh)
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(agent.transform.position, out hit, 3.0f, NavMesh.AllAreas))
+            {
+                agent.Warp(hit.position); 
+            }
+        }
+        
         ChangeState(chaseState);
     }
     
     private void Update()
     {
-        
         if (networkEnemyType.Value != Array.IndexOf(enemyAiScriptable, enemyType))
         {
             enemyType = enemyAiScriptable[networkEnemyType.Value];

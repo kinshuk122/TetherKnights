@@ -43,6 +43,7 @@ public class ChaseState : BaseState
     {
         base.Update();
         
+        
         Vector3 raycastOrigin = firePoint != null ? firePoint.transform.position : agent.transform.position + Vector3.up;
 
         Collider[] collidersInAttackRange = Physics.OverlapSphere(agent.transform.position, attackRange);
@@ -89,26 +90,6 @@ public class ChaseState : BaseState
     
     private void ChasePlayer()
     {
-        if (!agent.enabled)
-        {
-            Debug.LogWarning("NavMeshAgent was disabled. Enabling now.");
-            agent.enabled = true;
-        }
-
-        // Check if agent is on the NavMesh
-        if (!agent.isOnNavMesh)
-        {
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(agent.transform.position, out hit, 1.0f, NavMesh.AllAreas))
-            {
-                agent.Warp(hit.position); 
-            }
-            else
-            {
-                return;
-            }
-        }
-        
         if (playerStats != null && playerStats.isDead.Value)
         {
             for (int i = targets.Count - 1; i >= 0; i--)
